@@ -208,8 +208,9 @@ export default function Tickets() {
                     <tr key={ticket.ticket_id}>
                       <td>
                         <Link
-                          to={`/user_conversation?user_id=${ticket.ticket_id}`}
-                          className="text-decoration-none text-primary"
+                          to={`/user_conversation?user_id=${encodeURIComponent(
+                            ticket.ticket_id
+                          )}`}
                         >
                           {ticket.ticket_id}
                         </Link>

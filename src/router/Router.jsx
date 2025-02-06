@@ -35,7 +35,7 @@ export default function Router() {
           <Route path="/ClosedTicket" element={<ClosedTicket/>}/>
           <Route path="/RatedTicket" element={<RatedTicket/>}/>
           <Route path="/Callbackrequest" element={<Callbackrequest/>}/>
-          <Route path="/user_conversation?user_id" element={<UserConversation/>} />
+          <Route path="/user_conversation" element={<UserConversation/>} />
           <Route path="/Help" element={<Help/>}/>
         </Route>
 
