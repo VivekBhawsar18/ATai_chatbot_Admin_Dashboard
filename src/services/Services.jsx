@@ -36,12 +36,22 @@ export const updateResolutionStatus = async (ticketId, status) => {
 
 // Function to get all tickets information
 export const getAllTicketsInfo = async () => {
-  return fetchData("GET", `/tickets/get_all_tickets_info`);
+  try {
+    const response = await axios.get(`${BASE_URL}tickets/getAllTicketsInfo`);
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to fetch all tickets information.");
+  }
 };
 
 // Function to get the total ticket count
 export const getTicketCount = async () => {
-  return fetchData("GET", `/tickets/total_ticket_count`);
+  try {
+    const response = await axios.get(`${BASE_URL}tickets/ticket_count`);
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to fetch ticket count.");
+  }
 };
 
 // Fetch all callback requests
