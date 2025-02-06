@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getUserConversation } from '../services/Services'; // Make sure this function exists in Services
+import { getUserConversation } from '../services/Services'; 
 
 const UserConversation = () => {
   const [conversation, setConversation] = useState(null);
