@@ -27,7 +27,7 @@ export default function Router() {
         <Route path="/visitor" element={<Visitor />} />
         <Route path="/FAQdashboard" element={<FAQdashboard />} />
           <Route path="/dashboardcontent" element={<DashboardContent />} />
-          <Route path="/Tickets" element={<Tickets />} />
+          <Route path="/tickets" element={<Tickets />} />
           <Route path="/TotalTicket" element={<TotalTicket/>}/>
           <Route path="/OpenedTicket" element={<OpenedTicket/>}/>
           <Route path="/AnsweredTicket" element={<AnsweredTicket/>}/>
