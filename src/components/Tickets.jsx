@@ -32,7 +32,7 @@ export default function Tickets() {
       bgColor: "bg-success",
     },
     {
-      name: "UnAnsweredTicket",
+      name: "UnansweredTicket",
       url: "/UnAnsweredTicket",
       icon: FaArrowAltCircleLeft,
       bgColor: "bg-warning",
@@ -41,7 +41,7 @@ export default function Tickets() {
       name: "AnsweredTicket",
       url: "/AnsweredTicket",
       icon: FaRegThumbsUp,
-      bgColor: "bg-success",
+      bgColor: "bg-primary",
     },
     {
       name: "ClosedTicket",
@@ -61,7 +61,7 @@ export default function Tickets() {
     ticket_count: 0,
     OpenedTicket: 0,
     AnsweredTicket: 0,
-    UnAnsweredTicket: 0,
+    UnansweredTicket: 0,
     ClosedTicket: 0,
     RatedTicket: 0,
     UnresolvedTicket: 0,
@@ -117,7 +117,7 @@ export default function Tickets() {
           (ticket) => ticket.action === "Answered"
         ).length;
         const unansweredTicketCount = ticketsArray.filter(
-          (ticket) => ticket.action === "UnAnswered"
+          (ticket) => ticket.action === "Unanswered"
         ).length;
         const closedTicketCount = ticketsArray.filter(
           (ticket) => ticket.status === "Closed"
@@ -127,7 +127,7 @@ export default function Tickets() {
           ticket_count: totalTicketCount,
           OpenedTicket: openedTicketCount,
           AnsweredTicket: answeredTicketCount,
-          UnAnsweredTicket: unansweredTicketCount,
+          UnansweredTicket: unansweredTicketCount,
           ClosedTicket: closedTicketCount,
           RatedTicket: 0,
           UnresolvedTicket: 0,
@@ -147,7 +147,7 @@ export default function Tickets() {
          setTicketData((prevState) => ({
            ...prevState,
            UnresolvedTicket: unresolvedTicketResponse.unresolved_ticket_count || 0,
-           UnAnsweredTicket: unresolvedTicketResponse.unresolved_ticket_count || 0,  // Update UnansweredTicket based on Unresolved count
+           UnansweredTicket: unresolvedTicketResponse.unresolved_ticket_count || 0,  // Update UnansweredTicket based on Unresolved count
          }))
        // Fetch the rated ticket count
        const ratedTicketResponse = await getStarredTicketCount();
@@ -265,7 +265,7 @@ export default function Tickets() {
                               ? "success"
                               : ticket.action === "Answered"
                               ? "primary"
-                              : ticket.action === "UnAnswered"
+                              : ticket.action === "Unanswered"
                               ? "warning"
                               : "danger"
                           } btn-sm`}
