@@ -17,7 +17,7 @@ export default function Header() {
 const styles = {
   header: {
     padding: "20px 30px",
-    background: "linear-gradient(90deg,rgb(43, 143, 16) 0%,rgb(33, 154, 33) 100%)",
+    background: "linear-gradient(90deg, #2c3e50 0%, #2c3e50 100%)",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",

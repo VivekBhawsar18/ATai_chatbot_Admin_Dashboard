@@ -10,9 +10,15 @@ const fetchData = async (method, url, data = {}) => {
     return response.data;
   } catch (error) {
     console.error("Error:", error);
-    throw new Error(error.response?.data?.message || "Something went wrong!");
+    
+    // Handle error gracefully, check if error.response exists and fallback to a default message
+    const errorMessage = error.response?.data?.message || error.message || "Something went wrong!";
+    
+    // Throw a new error with the custom or fallback message
+    throw new Error(errorMessage);
   }
 };
+
 
 // Fetch ticket details by ID
 export const getTicketDetails = (ticketId) =>
@@ -47,3 +53,28 @@ export const updateCallbackRequestStatus = (ticketId, status) =>
     ticket_id: ticketId,
     status,
   });
+  export const updateUserqueryStatus = (ticketId, status) =>
+    fetchData("POST","/tickets/userquery_resolution_status", {
+      ticket_id: ticketId,
+      status,
+    });
+    // Fetch starred ticket count
+export const getStarredTicketCount = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/tickets/starred_ticket_count`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching starred ticket count:", error);
+    throw error;
+  }
+};
+  
+// Fetch unresolved ticket count
+export const getUnresolvedTicketCount = () =>
+  fetchData("GET", "/tickets/unresolved_ticket_count");
+
+
+// Fetch resolved ticket count
+export const getResolvedTicketCount = () =>
+  fetchData("GET", "/tickets/resolved_ticket_count");
+

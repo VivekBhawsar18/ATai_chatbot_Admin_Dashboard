@@ -92,7 +92,7 @@ export default function HelpSection() {
             If you need further assistance or encounter issues not covered in this guide, please feel free to contact the support team.
           </p>
           <p><strong>Support:</strong> +91 83 90 42 6222</p>
-          <p><strong>Email Us:</strong> <a href="mailto:info@atjoin.in">info@atjoin.in</a></p>
+          <p><strong>Email Us:</strong> <a href="mailto:info.ai@atjoin.in">info.ai@atjoin.in</a></p>
         </div>
       </div>
     </div>

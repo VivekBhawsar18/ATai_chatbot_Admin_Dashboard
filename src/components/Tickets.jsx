@@ -9,7 +9,13 @@ import {
   FaRegThumbsUp,
   FaStar,
 } from "react-icons/fa";
-import { getAllTicketsInfo, getTicketCount } from "../services/Services"; // Import the functions
+import {
+  getAllTicketsInfo,
+  getTicketCount,
+  getStarredTicketCount,
+  getUnresolvedTicketCount,
+  getResolvedTicketCount,
+} from "../services/Services"; // Import the functions
 
 export default function Tickets() {
   const links = [
@@ -58,6 +64,8 @@ export default function Tickets() {
     UnAnsweredTicket: 0,
     ClosedTicket: 0,
     RatedTicket: 0,
+    UnresolvedTicket: 0,
+    ResolvedTicket: 0,
   });
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -122,8 +130,32 @@ export default function Tickets() {
           UnAnsweredTicket: unansweredTicketCount,
           ClosedTicket: closedTicketCount,
           RatedTicket: 0,
+          UnresolvedTicket: 0,
+          ResolvedTicket:0,
         });
-
+         // Fetch resolved ticket count
+         const resolvedTicketResponse = await getResolvedTicketCount();
+         console.log("Resolved Ticket Response:", resolvedTicketResponse);
+         setTicketData((prevState) => ({
+           ...prevState,
+           ResolvedTicket: resolvedTicketResponse.resolved_ticket_count || 0,
+           AnsweredTicket: resolvedTicketResponse.resolved_ticket_count || 0,  // Update answeredTicket based on Unresolved count
+         }))
+         // Fetch unresolved ticket count
+         const unresolvedTicketResponse = await getUnresolvedTicketCount();
+         console.log("Unresolved Ticket Response:", unresolvedTicketResponse);
+         setTicketData((prevState) => ({
+           ...prevState,
+           UnresolvedTicket: unresolvedTicketResponse.unresolved_ticket_count || 0,
+           UnAnsweredTicket: unresolvedTicketResponse.unresolved_ticket_count || 0,  // Update UnansweredTicket based on Unresolved count
+         }))
+       // Fetch the rated ticket count
+       const ratedTicketResponse = await getStarredTicketCount();
+       console.log("Rated Ticket Response:", ratedTicketResponse); // Check what the API returns
+       setTicketData((prevState) => ({
+         ...prevState,
+         RatedTicket: ratedTicketResponse.starred_ticket_count || 0, // Update with correct field name
+       }));
         // Fetch ticket count using services
         const ticketCountResponse = await getTicketCount();
         setTicketData((prevState) => ({
@@ -157,6 +189,8 @@ export default function Tickets() {
             link.name === "TotalTicket"
               ? ticketData.ticket_count
               : ticketData[link.name] || 0;
+            
+              
 
           return (
             <div key={link.name} className="col-12 col-md-3 text-center">
