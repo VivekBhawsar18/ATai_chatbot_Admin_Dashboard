@@ -25,8 +25,17 @@ export const getTicketDetails = (ticketId) =>
   fetchData("GET", `/tickets/get_ticket_details`, { ticket_id: ticketId });
 
 // Fetch user conversation by user ID
-export const getUserConversation = (userId) =>
-  fetchData("GET",  `/tickets/get_user_conversation?user_id=${userId}`, { user_id: userId });
+// export const getUserConversation = (userId) =>
+//   fetchData("GET",  `/tickets/get_user_conversation?user_id=${userId}`, { user_id: userId });
+
+export const getUserConversation = (userId) => {
+  if (!userId) {
+    console.error("Error: userId is missing!");
+    return Promise.reject("User ID is required");
+  }
+  return fetchData("GET", `/tickets/get_user_conversation?user_id=${encodeURIComponent(userId)}`);
+};
+
 
 // Update resolution status of a ticket
 export const updateResolutionStatus = (ticketId, status) =>
