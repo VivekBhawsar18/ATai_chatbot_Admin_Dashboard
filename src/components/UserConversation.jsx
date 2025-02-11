@@ -166,7 +166,7 @@ const UserConversation = () => {
                     placeholder="Enter your remark"
                   />
                 </div>
-                {/* Callback Done Toggle */}
+                {/* Callback Done Toggle
                 <div className="form-group mt-3">
                   <label htmlFor="callbackDone">
                     <b>Callback Done</b>
@@ -183,7 +183,7 @@ const UserConversation = () => {
                 </div>
 
                 {/* User Query Solved Toggle */}
-                <div className="form-group mt-3">
+                {/* <div className="form-group mt-3">
                   <label htmlFor="userQuerySolved">
                     <b>User Query Solved</b>
                   </label>
@@ -198,7 +198,7 @@ const UserConversation = () => {
                       {userQuerySolved ? "Yes" : "No"}
                     </span>
                   </div>
-                </div>
+                </div> */} 
 
                 <div className="form-group mt-3">
                   <label htmlFor="status">
@@ -210,9 +210,9 @@ const UserConversation = () => {
                     value={status}
                     onChange={handleStatusChange}
                   >
-                    <option value="">Select Status</option>
+                   <option value="pending">Pending</option>
                     <option value="open">Open</option>
-                    <option value="pending">Pending</option>
+                    
                     <option value="closed">Closed</option>
                   </select>
                 </div>

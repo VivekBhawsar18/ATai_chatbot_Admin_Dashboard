@@ -139,10 +139,11 @@ export default function FAQdashboard() {
       className="container pt-4 ml-0"
       style={{ maxWidth: "1000px", margin: "auto" }}
     >
-      <h1 className="text-center mb-4 pl-10">FAQ Dashboard</h1>
-
-      {/* Updated FAQ List with Scrollable Container */}
-      <div
+<div>
+      <h1 className="text-center mb-4 pl-10"style={{ color: "blue" }}>FAQ Dashboard</h1>
+      </div>
+        {/* Updated FAQ List with Scrollable Container */}
+        <div
         className="faq-list mr-5"
         style={{
           maxHeight: "700px", // Set maximum height for the container

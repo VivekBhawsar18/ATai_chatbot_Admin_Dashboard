@@ -7,6 +7,7 @@ export default function Callbackrequest() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null); // Store the success message after update
+  const [statusFilter, setStatusFilter] = useState("Pending"); // State to filter by status
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,6 +32,11 @@ export default function Callbackrequest() {
   // If error, show error message
   if (error) return <div>Error: {error}</div>;
 
+  // Filter tickets based on the statusFilter
+  const filteredTickets = tickets.filter(
+    (ticket) => ticket.status === statusFilter
+  );
+
   return (
     <div className="container mt-5">
       {message && <div className="alert alert-success">{message}</div>}
@@ -39,6 +45,23 @@ export default function Callbackrequest() {
         <h4 className="mb-4" style={{ color: "blue" }}>
           Callback Requests
         </h4>
+
+        {/* Buttons for filtering */}
+        <div className="mb-3">
+          <button
+            className={`btn btn-${statusFilter === "Pending" ? "primary" : "secondary"} mr-2`}
+            onClick={() => setStatusFilter("Pending")}
+          >
+            Pending
+          </button>
+          <button
+            className={`btn btn-${statusFilter === "Callback done" ? "primary" : "secondary"}`}
+            onClick={() => setStatusFilter("Callback done")}
+          >
+            Callback Done
+          </button>
+        </div>
+
         <table className="table table-bordered table-striped">
           <thead className="bg-light">
             <tr>
@@ -51,8 +74,8 @@ export default function Callbackrequest() {
             </tr>
           </thead>
           <tbody>
-            {tickets.length > 0 ? (
-              tickets.map((ticket) => (
+            {filteredTickets.length > 0 ? (
+              filteredTickets.map((ticket) => (
                 <tr key={ticket.ticket_id}>
                   <td>
                     <Link
@@ -82,8 +105,7 @@ export default function Callbackrequest() {
               ))
             ) : (
               <tr>
-                <td colSpan="7">No callback requests available.</td>{" "}
-                {/* Updated column span */}
+                <td colSpan="6">No callback requests available.</td> {/* Updated column span */}
               </tr>
             )}
           </tbody>
