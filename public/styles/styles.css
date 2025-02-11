@@ -80,6 +80,10 @@
       padding: 15px;
     }
   }
+  .highlighted {
+    background-color: #f0f8ff; /* Light blue background for highlight */
+    font-weight: bold;
+  }
   
           
           

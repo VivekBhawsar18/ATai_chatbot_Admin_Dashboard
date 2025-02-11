@@ -56,8 +56,9 @@ export default function Callbackrequest() {
                 <tr key={ticket.ticket_id}>
                   <td>
                     <Link
-                      to={`/user_conversation/${ticket.ticket_id}`}
-                      className="text-decoration-none text-primary"
+                      to={`/user_conversation?user_id=${encodeURIComponent(
+                        ticket.ticket_id
+                      )}`}
                     >
                       {ticket.ticket_id}
                     </Link>
@@ -69,7 +70,9 @@ export default function Callbackrequest() {
                   <td>
                     <span
                       className={`badge bg-${
-                        ticket.status === "Callback done" ? "success" : "warning"
+                        ticket.status === "Callback done"
+                          ? "success"
+                          : "warning"
                       }`}
                     >
                       {ticket.status} {/* Dynamically show the status */}
@@ -79,7 +82,8 @@ export default function Callbackrequest() {
               ))
             ) : (
               <tr>
-                <td colSpan="7">No callback requests available.</td> {/* Updated column span */}
+                <td colSpan="7">No callback requests available.</td>{" "}
+                {/* Updated column span */}
               </tr>
             )}
           </tbody>

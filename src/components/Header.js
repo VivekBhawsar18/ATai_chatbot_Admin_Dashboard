@@ -17,7 +17,7 @@ export default function Header() {
 const styles = {
   header: {
     padding: "20px 30px",
-    background: "linear-gradient(90deg, #2c3e50 0%, #2c3e50 100%)",
+    background: "linear-gradient(90deg,rgb(204, 211, 219) 0%,rgb(106, 143, 181) 100%)",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -30,7 +30,7 @@ const styles = {
     fontSize: "24px",
     fontWeight: "700",
     margin: 0,
-    color: "#fff",
+    color: "#000000",
   },
   profile: {
     display: "flex",

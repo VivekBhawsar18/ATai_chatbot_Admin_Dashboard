@@ -3,13 +3,13 @@ import React from "react";
 export default function HelpSection() {
   return (
     <div className="container-fluid mt-5" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
-      <h2 style={{color: 'blue'}}>Admin Dashboard Help</h2>
+      <h2 style={{ color: 'blue' }}>Admin Dashboard Help</h2>
       <p>Welcome to the Help Section. Here you will find all the necessary details on how to operate the Admin Dashboard.</p>
 
       <div className="d-flex flex-column my-4">
         {/* Overview of Admin Dashboard */}
         <div className="my-3">
-        <h3 style={{color: 'blue'}}>1. Overview of Admin Dashboard</h3>
+          <h3 style={{ color: 'blue' }}>1. Overview of Admin Dashboard</h3>
           <p>
             Welcome to the Admin Dashboard! This dashboard allows you to manage, monitor,
             and update various user-related requests and tickets.
@@ -19,7 +19,7 @@ export default function HelpSection() {
 
         {/* Ticket Management */}
         <div className="my-3">
-        <h3 style={{color: 'blue'}}>2. Ticket Management</h3>
+          <h3 style={{ color: 'blue' }}>2. Ticket Management</h3>
           <p>
             The Tickets section is where all ticket-related data is stored and managed. You can view, track, and manage tickets based on their current status.
           </p>
@@ -28,66 +28,72 @@ export default function HelpSection() {
           <ul>
             <li>View Ticket Categories: You can see the total count of tickets and tickets grouped by their statuses, such as:</li>
             <ul>
-              <li>Opened Tickets: Tickets that are still awaiting resolution.</li>
-              <li>Answered Tickets: Tickets that have been responded to but may not be resolved.</li>
-              <li>Unanswered Tickets: Tickets that have not received any response.</li>
-              <li>Closed Tickets: Tickets that have been resolved and are closed.</li>
-              <li>Rated Tickets: Tickets that have received feedback or ratings.</li>
+              <li><strong>Opened Tickets:</strong> Tickets that are still awaiting resolution.</li>
+              <li><strong>Answered Tickets:</strong> Tickets that have been responded to but may not be resolved.</li>
+              <li><strong>Unanswered Tickets:</strong> Tickets that have not received any response.</li>
+              <li><strong>Closed Tickets:</strong> Tickets that have been resolved and are closed.</li>
+              <li><strong>Rated Tickets:</strong> Tickets that have received feedback or ratings.</li>
             </ul>
           </ul>
 
           <p><strong>b. Interacting with Tickets</strong></p>
           <ul>
-            <li>View Ticket Details: Clicking on a specific ticket's ID (e.g., #Deep1) will take you to the User Conversation section where you can view detailed conversations with users.</li>
-            <li>Filter Tickets: Use the navigation to quickly access tickets based on their status.</li>
-            <li>Update Ticket Status: For each ticket, you can update its status (e.g., "Mark as Resolved" or "Mark as Unresolved") depending on the progress of the ticket.</li>
+            <li><strong>View Ticket Details:</strong> Clicking on a specific ticket's ID (e.g., #User1) will take you to the User Conversation section where you can view detailed conversations with users.</li>
+            <li><strong>Filter Tickets:</strong> Use the navigation to quickly access tickets based on their status.</li>
+            
           </ul>
         </div>
 
         {/* User Conversations */}
         <div className="my-3">
-        <h3 style={{color: 'blue'}}>3. User Conversations</h3>
+          <h3 style={{ color: 'blue' }}>3. User Conversations</h3>
           <p>
             The User Conversations section shows the communication history between the admin and the users for a specific ticket.
           </p>
 
           <p><strong>a. What Can You Do in the User Conversations Section?</strong></p>
           <ul>
-            <li>View User Conversations: You can see the conversation history between the admin and the user for each ticket. This will display the messages exchanged, identifying whether the message was sent by the user or the admin.</li>
+            <li><strong>View User Conversations:</strong> You can see the full conversation history between the admin and the user for a given ticket. The chat is displayed in a clear, conversational format, showing which messages were sent by the user and which were sent by the admin.</li>
+            <li><strong>Mark Callback Status:</strong> You can toggle the "Callback Done" option if the callback has been successfully completed.</li>
+            <li><strong>Mark User Query as Solved:</strong> You can toggle the "User Query Solved" option to mark the user's query as resolved once the issue has been addressed.</li>
+            <li><strong>Add Remarks:</strong> You can add any additional remarks about the ticket or conversation, which can be used for internal tracking or notes.</li>
+            <li><strong>Change Ticket Status:</strong> You can update the ticket's current status (e.g., Open, Pending, Closed) to reflect the progress of the request.</li>
           </ul>
 
           <p><strong>b. Ticket Details and Messages</strong></p>
           <ul>
-            <li>Ticket ID at the Top: The Ticket ID is displayed at the top, making it easy to identify which ticket the conversation is linked to.</li>
-            <li>Messages Displayed in Chat Format: The conversation is displayed in a chat format, with each message appearing from either the user or the admin, helping you track interactions in a conversational format.</li>
-            <li>View Ticket Information: Alongside the conversation, detailed information related to the ticket, such as the user’s name, email, and contact number, will be displayed.</li>
+            <li><strong>Ticket ID at the Top:</strong> The Ticket ID is displayed at the top of the conversation screen. This helps you quickly identify which ticket the conversation is associated with.</li>
+            <li><strong>Messages Displayed in Chat Format:</strong> The conversation is displayed in a chat format. Each message is attributed to either the user or the admin, allowing for easy tracking of the conversation flow. Messages from the chatbot are styled differently for clear distinction.</li>
+            <li><strong>View Ticket Information:</strong> You can view important ticket information, such as the user's name, email, and contact number, alongside the conversation to ensure that you have all necessary details for effective communication.</li>
+          </ul>
+
+          <p><strong>c. Actions You Can Take on a Ticket</strong></p>
+          <ul>
+            <li><strong>Callback Done Toggle:</strong> If you’ve completed the callback request for a ticket, toggle the "Callback Done" checkbox to reflect that the action has been completed.</li>
+            <li><strong>User Query Solved Toggle:</strong> Once the user’s query has been resolved, you can toggle the "User Query Solved" checkbox to indicate that the issue is closed.</li>
+            <li><strong>Status Update:</strong> Update the status of the ticket by selecting an appropriate option (Open, Pending, Closed) from the dropdown. This helps keep track of the ticket’s progress.</li>
+            <li><strong>Submit the Changes:</strong> After adding remarks, toggling status options, or updating the ticket, make sure to submit the form to save the changes.</li>
           </ul>
         </div>
 
         {/* Callback Requests */}
         <div className="my-3">
-        <h3 style={{color: 'blue'}}>4. Callback Requests</h3>
+          <h3 style={{ color: 'blue' }}>4. Callback Requests</h3>
           <p>
             In the Callback Requests section, you can manage requests where users have asked for callbacks.
           </p>
 
           <p><strong>a. What Can You Do in the Callback Requests Section?</strong></p>
           <ul>
-            <li>View Callback Requests: This section shows all the tickets where users have requested a callback.</li>
-            <li>See Request Status: Each request will show if it’s Pending or Resolved. You can click on any request to view detailed information.</li>
-            <li>Update Status: You can change the status of the callback request (e.g., mark it as Resolved if you've handled the request).</li>
-          </ul>
-
-          <p><strong>b. Actions for Callback Requests</strong></p>
-          <ul>
-            <li>Mark Callback Request as Resolved: If you’ve addressed the request, mark it as resolved.</li>
-            <li>Mark Callback Request as Pending: If the request is not yet addressed, mark it as pending.</li>
+            <li><strong>View Callback Requests:</strong> This section shows all the tickets where users have requested a callback. Each row in the table represents a callback request, displaying relevant information such as the user’s name, contact, email, and query.</li>
+            <li><strong>See Request Status:</strong> Each request will show the current status (e.g., "Callback done" or "Pending"). The status is color-coded for easy identification, with a green badge for resolved (Callback done) requests and a yellow badge for pending ones.</li>
+            <li><strong>Click to View Details:</strong> You can click on any ticket ID in the table to view detailed information about the specific callback request. This opens a conversation page where you can interact with the user directly.</li>
           </ul>
         </div>
 
         {/* Contact Support */}
         <div className="my-3">
-        <h3 style={{color: 'blue'}}>5. Contact Support</h3>
+          <h3 style={{ color: 'blue' }}>5. Contact Support</h3>
           <p>
             If you need further assistance or encounter issues not covered in this guide, please feel free to contact the support team.
           </p>

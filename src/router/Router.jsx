@@ -21,7 +21,8 @@ export default function Router() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<DashboardLayout />}>
-        {/* <Route path="/header" element={<Header/>}/>
+        <Route index element={<Tickets />} />
+//         {/* <Route path="/header" element={<Header/>}/>
         <Route path="/footer" element={<Footer/>}/> */}
         <Route path="/sidebar" element={<Sidebar/>}/>
         <Route path="/visitor" element={<Visitor />} />
@@ -44,3 +45,6 @@ export default function Router() {
     </BrowserRouter>
   );
 }
+
+
+

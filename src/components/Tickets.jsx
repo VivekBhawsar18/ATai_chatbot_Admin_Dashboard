@@ -178,6 +178,7 @@ export default function Tickets() {
 
   console.log("Ticket Data:", ticketData); // Check ticket data in the console
   console.log("Tickets Array:", tickets); // Check if tickets array is populated
+  
 
   return (
     <div className="container mt-5">
