@@ -63,7 +63,7 @@ const styles = {
   sidebar: {
     width: "250px",
     height: "150vh",
-    background: "linear-gradient(90deg,rgb(204, 211, 219) 0%,rgb(194, 203, 212) 100%)",
+    backgroundColor: "black", 
     color: "white",
     display: "flex",
     flexDirection: "column",
@@ -80,7 +80,7 @@ const styles = {
     marginLeft: "10px",
     fontSize: "24px",
     fontWeight: "700",
-    color: "#000000",
+    color: "#FFFFFF",
   },
   nav: {
     listStyleType: "none",
@@ -92,9 +92,9 @@ const styles = {
   },
   navLink: {
     textDecoration: "none",
-    color: "#000000",
+    color: "#FFFFFF",
     fontWeight: "500",
-    fontSize: "18px",
+    fontSize: "16px",
     display: "block",
     padding: "12px 20px",
     borderRadius: "8px",
