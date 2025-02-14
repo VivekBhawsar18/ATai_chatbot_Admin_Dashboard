@@ -3,7 +3,7 @@ import React from 'react';
 export default function Header() {
   return (
     <div style={styles.header}>
-      <h2 style={styles.title}>Welcome To Admin Dashboard</h2>
+      <h2 style={styles.title}>Welcome To Agent Dashboard</h2>
       <div style={styles.profile}>
         <img src="/styles/ATai ChatBot.png" alt="User" style={styles.profileImage} />
         <div style={styles.dropdownIcon}>

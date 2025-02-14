@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom"; // Import Link and useLoca
 
 export default function Sidebar() {
   const links = [
-    { name: "Chatbot", url: "/FAQdashboard" },
+    // { name: "Chatbot", url: "/FAQdashboard" },
     { name: "Tickets", url: "/Tickets" },
     { name: "Callback Request", url: "/Callbackrequest" },
     { name: "Help", url: "/help" },
@@ -21,7 +21,7 @@ export default function Sidebar() {
             alt="Logo"
             style={{ width: "50px", borderRadius: "50%" }}
           />
-          <h3 style={styles.logoText}> ATai ChatBot</h3>
+          <h3 style={styles.logoText}> ATai </h3>
         </div>
         <ul style={styles.nav}>
           {links.map((link, index) => {

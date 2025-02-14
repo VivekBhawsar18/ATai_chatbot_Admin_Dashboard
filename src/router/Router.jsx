@@ -22,8 +22,8 @@ export default function Router() {
       <Routes>
         <Route path="/" element={<DashboardLayout />}>
         <Route index element={<Tickets />} />
-//         {/* <Route path="/header" element={<Header/>}/>
-        <Route path="/footer" element={<Footer/>}/> */}
+        {/* <Route path="/header" element={<Header/>}/>
+        <Route path="/footer" element={<Footer/>}/>   */}
         <Route path="/sidebar" element={<Sidebar/>}/>
         <Route path="/visitor" element={<Visitor />} />
         <Route path="/FAQdashboard" element={<FAQdashboard />} />
@@ -32,7 +32,7 @@ export default function Router() {
           <Route path="/TotalTicket" element={<TotalTicket/>}/>
           <Route path="/OpenedTicket" element={<OpenedTicket/>}/>
           <Route path="/AnsweredTicket" element={<AnsweredTicket/>}/>
-          <Route path="/UnAnsweredTicket" element={<UnAnsweredTicket/>}/>
+          <Route path="/UnansweredTicket" element={<UnAnsweredTicket/>}/>
           <Route path="/ClosedTicket" element={<ClosedTicket/>}/>
           <Route path="/RatedTicket" element={<RatedTicket/>}/>
           <Route path="/Callbackrequest" element={<Callbackrequest/>}/>

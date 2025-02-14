@@ -68,15 +68,14 @@ export const updateCallbackRequestStatus = (ticketId, status) =>
       status,
     });
     // Fetch starred ticket count
-export const getStarredTicketCount = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/tickets/starred_ticket_count`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching starred ticket count:", error);
-    throw error;
-  }
-};
+    export const getStarredTicketCount = () =>
+      fetchData("GET", "/tickets/starred_ticket_count");
+
+export const markAsImportant = (userId) =>
+  fetchData("POST", `/star_ticket?user_id=${userId}`);
+
+export const unMarkAsImportant = (userId) =>
+  fetchData("POST", `/un_star_ticket?user_id=${userId}`);
   
 // Fetch unresolved ticket count
 export const getUnresolvedTicketCount = () =>
@@ -87,3 +86,18 @@ export const getUnresolvedTicketCount = () =>
 export const getResolvedTicketCount = () =>
   fetchData("GET", "/tickets/resolved_ticket_count");
 
+export const createTicket = async (ticketData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/tickets/create_ticket`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(ticketData),
+    });
+
+    if (!response.ok) throw new Error("Failed to create ticket");
+    return response.json(); // Return the response data
+  } catch (error) {
+    console.error("Error creating ticket:", error);
+    throw error;
+  }
+};

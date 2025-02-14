@@ -13,7 +13,7 @@ const UnAnsweredTicket = () => {
         const fetchedTickets = await getAllTicketsInfo();
         // Filter tickets to only show unanswered ones
         const unansweredTickets = fetchedTickets.filter(
-          (ticket) => ticket.action === "UnAnswered"
+          (ticket) => ticket.action === "Unanswered"
         );
         setTickets(unansweredTickets);
       } catch (err) {
