@@ -72,10 +72,10 @@ export const updateCallbackRequestStatus = (ticketId, status) =>
       fetchData("GET", "/tickets/starred_ticket_count");
 
 export const markAsImportant = (userId) =>
-  fetchData("POST", `/star_ticket?user_id=${userId}`);
+  fetchData("POST", `/star_ticket?user_id=${encodeURIComponent(userId)}`);
 
 export const unMarkAsImportant = (userId) =>
-  fetchData("POST", `/un_star_ticket?user_id=${userId}`);
+  fetchData("POST", `/un_star_ticket?user_id=${encodeURIComponent(userId)}`);
   
 // Fetch unresolved ticket count
 export const getUnresolvedTicketCount = () =>

@@ -3,10 +3,9 @@ import { Link, useLocation } from "react-router-dom"; // Import Link and useLoca
 
 export default function Sidebar() {
   const links = [
-    // { name: "Chatbot", url: "/FAQdashboard" },
-    { name: "Tickets", url: "/Tickets" },
-    { name: "Callback Request", url: "/Callbackrequest" },
-    { name: "Help", url: "/help" },
+    { name: "Tickets", url: "/Tickets", icon: "fas fa-ticket-alt" }, // Added Font Awesome icon
+    { name: "Callback Request", url: "/Callbackrequest", icon: "fas fa-phone-alt" }, // Added Font Awesome icon
+    { name: "Help and Support", url: "/help", icon: "fas fa-question-circle" }, // Added Font Awesome icon
   ];
 
   // Get the current location from useLocation hook
@@ -48,8 +47,12 @@ export default function Sidebar() {
                     }
                   }}
                 >
+                  {/* Font Awesome icon before the text */}
+                  <i className={link.icon} style={styles.icon}></i> 
                   {link.name}
                 </Link>
+                {/* Partition/Separator between nav items */}
+                {index < links.length - 1 && <div style={styles.separator}></div>}
               </li>
             );
           })}
@@ -60,10 +63,12 @@ export default function Sidebar() {
 }
 
 const styles = {
+  body: {
+    backgroundColor: "#f8f9fa",
+  },
   sidebar: {
-    width: "250px",
-    height: "150vh",
-    backgroundColor: "black", 
+    backgroundColor: "#222", // Updated to the provided background color
+    minHeight: "160vh",
     color: "white",
     display: "flex",
     flexDirection: "column",
@@ -92,16 +97,32 @@ const styles = {
   },
   navLink: {
     textDecoration: "none",
-    color: "#FFFFFF",
+    color: "white",
     fontWeight: "500",
     fontSize: "16px",
     display: "block",
     padding: "12px 20px",
     borderRadius: "8px",
     transition: "all 0.3s ease",
+    display: "flex", // Ensures proper alignment of icon and text
+    alignItems: "center", // Vertically centers the icon and text
   },
   activeNavLink: {
-    backgroundColor: "#00bfff", // Background color for the active tab
+    backgroundColor: " #0056b3", // Updated to match hover effect color
     paddingLeft: "25px", // Indentation when active
   },
+  icon: {
+    marginRight: "10px", // Adds space between the icon and the text
+  },
+  // For hover effect
+  navLinkHover: {
+    backgroundColor: " #0056b3", // Hover effect color
+  },
+  // Separator style between nav links
+  separator: {
+    borderBottom: "1px solid #dcdcdc", // Dark white separator (light gray)
+    margin: "10px 0", // Adjust spacing between the nav links and the separator
+  },
 };
+
+

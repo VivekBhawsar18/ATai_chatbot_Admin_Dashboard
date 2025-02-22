@@ -1,8 +1,8 @@
 import React from 'react'
 import Header from "./Header"
-// import Footer from "./Footer"
+import Footer from "./Footer"
 
-// import { Outlet } from 'react-router-dom'
+ import { Outlet } from 'react-router-dom'
 
 
 
@@ -10,8 +10,8 @@ export default function Visitor() {
   return (
     <div>
         <Header/>
-        {/* <Outlet/> */}
-        {/* <Footer/>  */}
+        <Outlet/> 
+        <Footer/> 
     </div>
   )
 }

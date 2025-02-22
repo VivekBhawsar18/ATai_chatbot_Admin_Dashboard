@@ -1,0 +1,63 @@
+
+.table th,
+.table td {
+  width: 15%;
+}
+
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  width: 10%;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  width: 15%;
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  width: 15%;
+}
+
+.table th:nth-child(4),
+.table td:nth-child(4) {
+  width: 20%;
+}
+
+.table th:nth-child(5),
+.table td:nth-child(5) {
+  width: 20%;
+}
+
+.table th:nth-child(6),
+.table td:nth-child(6) {
+  width: 10%;
+}
+/* Ensure the container takes the full viewport height */
+.full-page-container {
+    height: 100vh; /* Full screen height */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align content at the top */
+  }
+  
+  /* Make the content area grow and fill the available space */
+  .content {
+    flex: 1; /* Allows the content to take up the remaining space */
+    overflow-y: auto; /* Allow scrolling in case of overflow */
+  }
+  
+  /* Table styling */
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .table th, .table td {
+    vertical-align: middle; /* Center-align the content */
+  }
+  
+  .bg-light {
+    background-color: #f8f9fa !important;
+  }
+  

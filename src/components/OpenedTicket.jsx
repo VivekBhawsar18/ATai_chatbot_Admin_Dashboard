@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { getAllTicketsInfo } from "../services/Services"; // Assuming this function fetches all tickets
 
 const OpenedTicket = () => {
@@ -26,40 +28,58 @@ const OpenedTicket = () => {
     fetchTickets();
   }, []);
 
-  if (loading) return <div className="text-center">Loading...</div>;
-  if (error) return <div className="text-center">{error}</div>;
-
   return (
     <div className="container mt-5">
       {/* Heading */}
       <div className="text-center mb-4">
-        <h4 style={{color: 'blue'}}>Opened Tickets</h4>
-              {/* Table displaying opened tickets */}
-      <div>
-        <table className="table table-bordered table-striped table-responsive">
-          <thead className="bg-light">
+        <h4 style={{ color: "blue" }}>Opened Tickets</h4>
+         {/* Scrollable Table */}
+      <div style={{ maxHeight: "400px", overflowY: "auto", border: "1px solid #ddd" }}>
+        <table className="table table-bordered table-striped">
+          <thead
+            className="bg-light"
+            style={{
+              position: "sticky",
+              top: 0,
+              backgroundColor: "#f8f9fa",
+              zIndex: 2,
+            }}
+          >
             <tr>
               <th>Ticket ID</th>
               <th>Title</th>
               <th>Updated</th>
-              <th>Action</th>
+              {/* <th>Action</th> */}
               <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {tickets.length > 0 ? (
+            {loading ? (
+              // Skeleton Loader - Display 5 Placeholder Rows
+              [...Array(5)].map((_, index) => (
+                <tr key={index}>
+                  <td><Skeleton width={80} /></td>
+                  <td><Skeleton width={150} /></td>
+                  <td><Skeleton width={120} /></td>
+                  <td><Skeleton width={100} /></td>
+                  <td><Skeleton width={80} /></td>
+                </tr>
+              ))
+            ) : tickets.length > 0 ? (
               tickets.map((ticket) => (
                 <tr key={ticket.ticket_id}>
                   <td>{ticket.ticket_id}</td>
                   <td>{ticket.ticket_title}</td>
                   <td>{new Date(ticket.updated).toLocaleString()}</td>
-                  <td>{ticket.action}</td>
+                  {/* <td>{ticket.action}</td> */}
                   <td>{ticket.status}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="5">No opened tickets available.</td>
+                <td colSpan="5" className="text-center">
+                  No opened tickets available.
+                </td>
               </tr>
             )}
           </tbody>
@@ -67,11 +87,9 @@ const OpenedTicket = () => {
       </div>
       </div>
 
-
+     
     </div>
   );
 };
 
 export default OpenedTicket;
-
-
