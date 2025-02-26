@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaBriefcase,
   FaEnvelope,
@@ -16,11 +16,13 @@ import {
   CartesianGrid,
   Legend,
   ResponsiveContainer,
-} from "recharts"; // Import Recharts components
+} from "recharts"; 
 import {
   getAllTicketsInfo,
   getTicketCount,
   getStarredTicketCount,
+  getTicketRemark,
+  saveTicketRemark,
 } from "../services/Services";
 
 export default function Tickets() {
@@ -57,11 +59,11 @@ export default function Tickets() {
     Closed: 0,
     Rated: 0,
   });
-
+  const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const ticketId = queryParams.get("ticket_id");
-  const updateRated = queryParams.get("updateRated");
+
 
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -69,6 +71,7 @@ export default function Tickets() {
   const [updatedTickets, setUpdatedTickets] = useState([]);
   const [filterStatus, setFilterStatus] = useState("All");
   const [starredCount, setStarredCount] = useState(0);
+  const [ticketRemarks, setTicketRemarks] = useState([]);
 
   const scrollContainerRef = useRef(null);
   const isDragging = useRef(false);
@@ -91,93 +94,86 @@ export default function Tickets() {
     isDragging.current = false;
   };
 
-  // const updateTicketRemarkAndStatus = (ticketId, remark, status) => {
-  //   setUpdatedTickets((prevState) => {
-  //     const updated = prevState.map((ticket) => {
-  //       if (ticket.ticket_id === ticketId) {
-  //         return {
-  //           ...ticket,
-  //           remark,
-  //           status,
-  //         };
-  //       }
-  //       return ticket;
-  //     });
-  //     return updated;
-  //   });
-  // };
+  
+  const fetchData = async () => {
+    setLoading(true);
+
+    try {
+      console.log("Fetching ticket data...");
+
+      
+      const ticketsArray = await getAllTicketsInfo();
+      console.log("Fetched Tickets Array:", ticketsArray);
+      setTickets(ticketsArray);
+
+      
+      const totalTicketCount = ticketsArray.length;
+      const openedTicketCount = ticketsArray.filter(
+        (ticket) => ticket.status === "Opened"
+      ).length;
+      const closedTicketCount = ticketsArray.filter(
+        (ticket) => ticket.status === "Closed"
+      ).length;
+
+      console.log("Total Ticket Count:", totalTicketCount);
+      console.log("Opened Ticket Count:", openedTicketCount);
+      console.log("Closed Ticket Count:", closedTicketCount);
+
+      setTicketData({
+        ticket_count: totalTicketCount,
+        Opened: openedTicketCount,
+        Closed: closedTicketCount,
+        Rated: 0,
+      });
+
+      // Fetch the starred ticket count
+
+      const ratedTicketResponse = await getStarredTicketCount();
+      console.log("Rated Ticket Response:", ratedTicketResponse);
+      setTicketData((prevState) => ({
+        ...prevState,
+        Rated: ratedTicketResponse.starred_ticket_count || 0,
+      }));
+
+      
+      const ticketCountResponse = await getTicketCount();
+      console.log("Ticket Count Response:", ticketCountResponse);
+      setTicketData((prevState) => ({
+        ...prevState,
+        ticket_count: ticketCountResponse.ticket_count || 0,
+      }));
+    } catch (error) {
+      console.error("Error fetching ticket data:", error);
+      setError(error.message || "An error occurred while fetching data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-
-      try {
-        console.log("Fetching ticket data...");
-
-        // Fetch tickets data
-        const ticketsArray = await getAllTicketsInfo();
-        console.log("Fetched Tickets Array:", ticketsArray);
-        setTickets(ticketsArray);
-
-        // Calculate total and categorized ticket counts
-        const totalTicketCount = ticketsArray.length;
-        const openedTicketCount = ticketsArray.filter(
-          (ticket) => ticket.status === "Opened"
-        ).length;
-        const closedTicketCount = ticketsArray.filter(
-          (ticket) => ticket.status === "Closed"
-        ).length;
-
-        console.log("Total Ticket Count:", totalTicketCount);
-        console.log("Opened Ticket Count:", openedTicketCount);
-        console.log("Closed Ticket Count:", closedTicketCount);
-
-        setTicketData({
-          ticket_count: totalTicketCount,
-          Opened: openedTicketCount,
-          Closed: closedTicketCount,
-          Rated: 0,
-        });
-
-        // Fetch the starred ticket count
-        
-        const ratedTicketResponse = await getStarredTicketCount();
-        console.log("Rated Ticket Response:", ratedTicketResponse);
-        setTicketData((prevState) => ({
-          ...prevState,
-          Rated: ratedTicketResponse.starred_ticket_count || 0,
-        }));
-
-        // Fetch the general ticket count
-        const ticketCountResponse = await getTicketCount();
-        console.log("Ticket Count Response:", ticketCountResponse);
-        setTicketData((prevState) => ({
-          ...prevState,
-          ticket_count: ticketCountResponse.ticket_count || 0,
-        }));
-      } catch (error) {
-        console.error("Error fetching ticket data:", error);
-        setError(error.message || "An error occurred while fetching data.");
-      } finally {
-        setLoading(false);
-      }
-    };
- 
-
     fetchData();
   }, []);
+  
+    const handleRemarkChange = (ticketId,  newRemark) => {
+      setTicketRemarks((prevRemarks) => ({
+        ...prevRemarks,
+        [ticketId]: newRemark,
+      }));
+    };
 
-  // const sortedTickets = tickets.sort((a, b) => {
-  //   if (a.status === "Opened" && b.status !== "Opened") {
-  //     return -1;
-  //   }
-  //   if (a.status !== "Opened" && b.status === "Opened") {
-  //     return 1;
-  //   }
-  //   return new Date(b.updated) - new Date(a.updated);
-  // });
-  // Filtering logic (ensures correct filtering)
+    const handleSaveRemark = async (ticketId) => {
+      try {
+        const remark = ticketRemarks[ticketId] || "";
+        await saveTicketRemark(ticketId, remark);
+        alert("Remark saved successfully!");
+        fetchData(); 
+      } catch (error) {
+        console.error("Error saving remark:", error);
+      }
+    };
+
+
   const filteredTickets = tickets
     .filter(
       (ticket) => filterStatus === "All" || ticket.status === filterStatus
@@ -186,10 +182,7 @@ export default function Tickets() {
       (a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()
     );
 
-  // console.log("Sorted Tickets:", sortedTickets);
-
-  // if (loading) return <div>Loading...</div>;
-  // if (error) return <div>Error: {error}</div>;
+  
   // Bar Chart Data
   const barChartData = [
     { name: "Total", Total: ticketData.ticket_count },
@@ -205,7 +198,7 @@ export default function Tickets() {
         <div>
           <div className="row g-4 d-flex align-items-stretch">
             {/* Ticket Summary */}
-            <div className="col-12 col-md-6">
+            <div className="col-12 col-md-6 ">
               <div className="row g-4">
                 {links.map((link) => {
                   const Icon = link.icon;
@@ -214,17 +207,8 @@ export default function Tickets() {
                       ? ticketData.ticket_count
                       : ticketData[link.name] || 0;
 
-                    //   <p className="text-center">
-                    //   ⭐ <b>Starred Ticket Count:</b> {starredCount}
-                    // </p>
-              
-                    // {/* Pass update function as prop */}
-                    // <Link to={`/user_conversation?updateStarredCount=true`}>
-                    //   Go to User Conversation
-                    // </Link>
-
                   return (
-                    <div key={link.name} className="col-6 text-center">
+                    <div key={link.name} className="col-6  text-center">
                       <Link to={link.url} className="text-decoration-none">
                         <div
                           className={`dashboard-card ${link.bgColor} text-white p-4 rounded shadow`}
@@ -285,9 +269,9 @@ export default function Tickets() {
                 </ResponsiveContainer>
               </div>
             </div>
-            <div className="bg-white p-4 rounded shadow mb-4">
+            <div className="bg-white p-3 rounded shadow mb-4">
               {/* Filter Buttons */}
-              <div className="text-center my-3">
+              <div className="text-center my-2">
                 {["All", "Opened", "Closed"].map((status) => (
                   <button
                     key={status}
@@ -342,10 +326,10 @@ export default function Tickets() {
                       style={{
                         position: "sticky",
                         top: 0,
-                        zIndex: 1000, // Ensures it stays above other content
-                        // background: "#f8f9fa", // Ensure it doesn’t become transparent
-                        background: "white", // Prevents transparency issue
-                        boxShadow: "0px 2px 5px rgba(0,0,0,0.1)", // Optional shadow for visibility
+                        zIndex: 1000, 
+                       
+                        background: "white", 
+                        boxShadow: "0px 2px 5px rgba(0,0,0,0.1)", 
                       }}
                     >
                       <tr>
@@ -368,7 +352,7 @@ export default function Tickets() {
                     </thead>
                     <tbody>
                       {loading ? (
-                        // Skeleton Loader: 5 Placeholder Rows
+                    
                         [...Array(5)].map((_, index) => (
                           <tr key={index} className="placeholder-glow">
                             <td>
@@ -415,7 +399,32 @@ export default function Tickets() {
                                 }
                               )}
                             </td>
-                            <td>{ticket.remark || "No remark"}</td>
+                            {/* <td>
+                              <input
+                                type="text"
+                                value={ticket.remark || "No remark"}
+                                onChange={(e) =>
+                                  handleRemarkChange(
+                                    ticket.ticket_id,
+                                    e.target.value,
+                                    ticket.status
+                                  )
+                                }
+                                className="form-control"
+                              />
+                            </td> */}
+                           <td>
+                          <input
+                            type="text"
+                            value={ticketRemarks[ticket.ticket_id] || ticket.remark || "No remark"}
+                            onChange={(e) =>
+                              handleRemarkChange(ticket.ticket_id, e.target.value)
+                            }
+                            className="form-control"
+                          />
+                        
+                        </td>
+
                             <td>
                               <span
                                 className={`badge bg-${

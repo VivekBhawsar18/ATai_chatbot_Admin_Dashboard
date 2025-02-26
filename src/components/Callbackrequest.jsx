@@ -27,8 +27,8 @@ export default function Callbackrequest() {
     fetchData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  // if (loading) return <div>Loading...</div>;
+  // if (error) return <div>Error: {error}</div>;
 
   const filteredTickets = tickets.filter((ticket) => ticket.status === statusFilter);
 

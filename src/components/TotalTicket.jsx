@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { getAllTicketsInfo } from "../services/Services"; // Fetch tickets
+import { getAllTicketsInfo } from "../services/Services"; 
 import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css"; // Import Skeletor styles
+import "react-loading-skeleton/dist/skeleton.css"; 
 
 export default function TotalTicket() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch ticket data when the component mounts
+  
   useEffect(() => {
     const fetchTickets = async () => {
       try {
         const fetchedTickets = await getAllTicketsInfo();
-        // Sort tickets by date (newest first)
+        
         const sortedTickets = fetchedTickets.sort(
           (a, b) => new Date(b.updated) - new Date(a.updated)
         );
@@ -33,7 +33,7 @@ export default function TotalTicket() {
       <div className="text-center mb-4">
         <h4 style={{ color: "blue" }}>All Tickets</h4>
 
-        {/* Scrollable Table Wrapper */}
+        
         <div
           style={{
             maxHeight: "400px",
@@ -47,7 +47,7 @@ export default function TotalTicket() {
             className="table table-bordered table-striped"
             style={{ width: "100%" }}
           >
-            {/* Sticky Table Header */}
+           
             <thead
               className="bg-light"
               style={{
@@ -68,7 +68,7 @@ export default function TotalTicket() {
 
             <tbody>
               {loading ? (
-                // Display Skeletor Loader for 5 rows while loading
+                
                 [...Array(5)].map((_, index) => (
                   <tr key={index}>
                     <td>

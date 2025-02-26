@@ -6,7 +6,7 @@ import Visitor from './Visitor';
 
 
 export default function DashboardLayout() {
-  const isAuthenticated = false;  // Replace with your actual authentication check
+  const isAuthenticated = false;  
 
   return (
     <div style={{ display: "flex" }}>

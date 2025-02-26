@@ -1,11 +1,11 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom"; // Import Link and useLocation from react-router-dom
+import { Link, useLocation } from "react-router-dom";
 
 export default function Sidebar() {
   const links = [
-    { name: "Tickets", url: "/Tickets", icon: "fas fa-ticket-alt" }, // Added Font Awesome icon
-    { name: "Callback Request", url: "/Callbackrequest", icon: "fas fa-phone-alt" }, // Added Font Awesome icon
-    { name: "Help and Support", url: "/help", icon: "fas fa-question-circle" }, // Added Font Awesome icon
+    { name: "Tickets", url: "/Tickets", icon: "fas fa-ticket-alt" }, 
+    { name: "Callback Request", url: "/Callbackrequest", icon: "fas fa-phone-alt" }, 
+    { name: "Help and Support", url: "/help", icon: "fas fa-question-circle" }, 
   ];
 
   // Get the current location from useLocation hook
@@ -38,12 +38,12 @@ export default function Sidebar() {
                   // Handle mouse enter and leave events for hover effect
                   onMouseEnter={(e) => {
                     if (!isActive) {
-                      e.target.style.backgroundColor = "#d2b48c"; // Apply hover effect on mouse enter
+                      e.target.style.backgroundColor = "#d2b48c"; 
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!isActive) {
-                      e.target.style.backgroundColor = ""; // Reset background color on mouse leave
+                      e.target.style.backgroundColor = ""; 
                     }
                   }}
                 >
@@ -67,7 +67,7 @@ const styles = {
     backgroundColor: "#f8f9fa",
   },
   sidebar: {
-    backgroundColor: "#222", // Updated to the provided background color
+    backgroundColor: "#222", 
     minHeight: "160vh",
     color: "white",
     display: "flex",
@@ -104,24 +104,24 @@ const styles = {
     padding: "12px 20px",
     borderRadius: "8px",
     transition: "all 0.3s ease",
-    display: "flex", // Ensures proper alignment of icon and text
-    alignItems: "center", // Vertically centers the icon and text
+    display: "flex",
+    alignItems: "center", 
   },
   activeNavLink: {
-    backgroundColor: " #0056b3", // Updated to match hover effect color
-    paddingLeft: "25px", // Indentation when active
+    backgroundColor: " #0056b3", 
+    paddingLeft: "25px", 
   },
   icon: {
-    marginRight: "10px", // Adds space between the icon and the text
+    marginRight: "10px", 
   },
   // For hover effect
   navLinkHover: {
-    backgroundColor: " #0056b3", // Hover effect color
+    backgroundColor: " #0056b3", 
   },
   // Separator style between nav links
   separator: {
-    borderBottom: "1px solid #dcdcdc", // Dark white separator (light gray)
-    margin: "10px 0", // Adjust spacing between the nav links and the separator
+    borderBottom: "1px solid #dcdcdc", 
+    margin: "10px 0", 
   },
 };
 
