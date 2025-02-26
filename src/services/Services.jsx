@@ -68,20 +68,28 @@ export const markAsImportant = (ticketId) => {
     return Promise.reject("ticket ID is required");
   }
 
-  return fetchData(
-    "POST",
-    `/tickets/star_ticket?ticket_id=${encodeURIComponent(ticketId)}`
-  );
+//   return fetchData(
+//     "POST",
+//     `/tickets/star_ticket?ticket_id=${encodeURIComponent(ticketId)}`
+//   );
+// };
+return fetchData("POST", "/tickets/star_ticket", {
+  ticket_id: ticketId, // Send ticket_id in the body
+});
 };
 
 export const unMarkAsImportant = (ticketId) => {
   if (!ticketId) {
     return Promise.reject("ticketId is required");
   }
-  return fetchData(
-    "POST",
-    `/tickets/un_star_ticket?ticket_id=${encodeURIComponent(ticketId)}`
-  );
+//   return fetchData(
+//     "POST",
+//     `/tickets/un_star_ticket?ticket_id=${encodeURIComponent(ticketId)}`
+//   );
+// };
+return fetchData("POST", "/tickets/un_star_ticket", {
+  ticket_id: ticketId, 
+});
 };
 
 export const getUnresolvedTicketCount = () =>
@@ -123,14 +131,14 @@ export const getTicketUserInfo = async (ticketId) => {
   );
 };
 
-export const saveTicketRemark = async (ticketId, remark) => {
+export const saveTicketRemark = async (ticketId, agent_remarks) => {
   if (!ticketId) {
     console.error("Error: ticketId is missing!");
     return Promise.reject("ticket ID is required");
   }
   return fetchData("POST", `/tickets/save_remark`, {
     ticket_id: encodeURIComponent(ticketId),
-    remark: remark,
+    remark: agent_remarks,
   });
 };
 
@@ -140,9 +148,11 @@ export const getTicketRemark = async (ticketId) => {
     return Promise.reject("ticket ID is required");
   }
 
-  const response = await fetchData(
-    "GET",
-    `/tickets/get_remarks?ticket_id=${encodeURIComponent(ticketId)}`
+  // const response = await fetchData(
+  //   "GET",
+  //   `/tickets/get_remarks?ticket_id=${encodeURIComponent(ticketId)}`
+  // );
+  // return response.agent_remarks ?? "No remark available"; // Return a fallback message
+  return fetchData("GET",  `/tickets/get_remarks?ticket_id=${encodeURIComponent(ticketId)}`
   );
-  return response.remarks ?? "No remark available"; // Return a fallback message
 };

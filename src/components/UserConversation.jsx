@@ -25,14 +25,14 @@ import {
   FaUser,
   FaEnvelope,
   FaPhone,
-  FaClock ,
+  FaClock,
 } from "react-icons/fa";
 
 const UserConversation = ({ updateStarredCount }) => {
   const [conversation, setConversation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [remark, setRemark] = useState("");
+  const [agent_remarks, set_agent_Remarks] = useState("");
   const [status, setStatus] = useState("");
   const [rated, setRated] = useState(false);
   const [starredCount, setStarredCount] = useState(0);
@@ -106,107 +106,92 @@ const UserConversation = ({ updateStarredCount }) => {
     };
     const fetchRemarks = async () => {
       try {
+        console.log("Fetching remarks for userId:", userId);
         const response = await getTicketRemark(userId);
-        setRemarksList(response.remarks || []);
+        console.log("Remarks fetched:", response);
+        setRemarksList(response.agent_remarks || []);
       } catch (err) {
         console.error("Error fetching remarks:", err);
       }
     };
 
     if (userId) {
+      console.log("Fetching data for userId:", userId);
       fetchUserDetails();
       fetchConversation();
-
       fetchStarredCount();
       fetchConversationDuration();
       fetchRemarks();
     }
   }, [userId, updateStarredCount]);
-  // Handle rated toggle change
 
+  // Handle rated toggle change
   const handleCheckboxChange = () => {
     setRated((prev) => !prev);
+    console.log("Rated toggle changed:", !rated);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
+    console.log("Form submitted with values:");
+    console.log("userId:", userId);
+    console.log("agent_remarks:", agent_remarks);
+    console.log("rated:", rated);
+
     try {
       if (rated) {
+        console.log("Marking as important...");
         await markAsImportant(userId);
       } else {
+        console.log("Unmarking as important...");
         await unMarkAsImportant(userId);
       }
 
-      await saveTicketRemark(userId, remark);
-      const updatedRemarks = await getTicketRemark(userId);
-      setRemarksList(updatedRemarks.remarks || []);
-      setRemark("");
+      console.log("Saving remark...");
+      await saveTicketRemark(userId, agent_remarks);
 
+      console.log("Fetching updated remarks...");
+      const updatedRemarks = await getTicketRemark(userId);
+      console.log("Updated Remarks:", agent_remarks);
+      setRemarksList(updatedRemarks.agent_remarks || []);
+
+      console.log("Resetting agent_remarks...");
+      set_agent_Remarks("agent_remarks");
+
+      console.log("Fetching updated starred ticket count...");
       const updatedCount = await getStarredTicketCount();
+      console.log("Updated Starred Ticket Count:", updatedCount);
       updateStarredCount(updatedCount.starred_ticket_count);
 
-      localStorage.setItem(`remark_${userId}`, remark);
+      console.log("Saving remark to localStorage...");
+      localStorage.setItem(`remark_${userId}`, agent_remarks);
 
-      setTimeout(() => {
-        navigate("/Tickets");
-      }, 500);
+      console.log("Navigating to Tickets.jsx...");
+      navigate("/Tickets", { replace: true });
     } catch (error) {
       console.error("Error submitting:", error);
     } finally {
+      console.log("Form submission completed. Stopping loading spinner.");
       setLoading(false);
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  // try {
-  //   if (rated) {
-  //     await markAsImportant(userId);
-  //   } else {
-  //     await unMarkAsImportant(userId);
-  //   }
-  // await saveRemark(userId, remark);
-  // const updatedRemarks = await getRemarks(userId);
-  // setRemarksList(updatedRemarks.remarks || []);
-  // setRemark("");
-
-  // Save the new remark
-  // await saveTicketRemark(userId, remark);
-
-  // Fetch updated remarks list
-  // const updatedRemarks = await getTicketRemark(userId);
-  // setRemarksList(updatedRemarks.remarks || []);
-
-  // Reset remark input after saving
-  // setRemark("");
-  // Fetch updated starred count
-  // const updatedCount = await getStarredTicketCount();
-  // updateStarredCount(updatedCount.starred_ticket_count);
-
-  // ✅ Notify `Tickets.jsx` that a remark was added
-  //     localStorage.setItem(`remark_${userId}`, remark);
-
-  //     navigate("/Tickets", { replace: true });
-  //   } catch (error) {
-  //     console.error("Error submitting:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   // Handle remark change
-  // const handleRemarkChange = (e) => {
-  //   setRemark(e.target.value);
-  // };
+  const handleRemarkChange = (e) => {
+    console.log("Remark changed:", e.target.value);
+    set_agent_Remarks(e.target.value);
+  };
 
-  // // Handle status change
-  // const handleStatusChange = (e) => {
-  //   setStatus(e.target.value);
-  // };
+
+  
+
+  // Handle status change
+  const handleStatusChange = (e) => {
+    console.log("Status changed:", e.target.value);
+    setStatus(e.target.value);
+  };
 
   // if (loading) return <div>Loading...</div>;
   // if (error) return <div>{error}</div>;
@@ -353,8 +338,8 @@ const UserConversation = ({ updateStarredCount }) => {
                 <textarea
                   className="form-control"
                   rows="3"
-                  value={remark}
-                  onChange={(e) => setRemark(e.target.value)}
+                  value={agent_remarks}
+                  onChange={handleRemarkChange}
                   placeholder="Enter your remark"
                 />
               </div>
@@ -365,7 +350,7 @@ const UserConversation = ({ updateStarredCount }) => {
                 <select
                   className="form-control"
                   value={status}
-                  onChange={(e) => setStatus(e.target.value)}
+                  onChange={handleStatusChange}
                 >
                   <option value="Pending">Pending</option>
                   <option value="Opened">Opened</option>

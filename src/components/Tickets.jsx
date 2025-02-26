@@ -16,7 +16,7 @@ import {
   CartesianGrid,
   Legend,
   ResponsiveContainer,
-} from "recharts"; 
+} from "recharts";
 import {
   getAllTicketsInfo,
   getTicketCount,
@@ -64,7 +64,6 @@ export default function Tickets() {
   const queryParams = new URLSearchParams(location.search);
   const ticketId = queryParams.get("ticket_id");
 
-
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -94,19 +93,16 @@ export default function Tickets() {
     isDragging.current = false;
   };
 
-  
   const fetchData = async () => {
     setLoading(true);
 
     try {
       console.log("Fetching ticket data...");
 
-      
       const ticketsArray = await getAllTicketsInfo();
       console.log("Fetched Tickets Array:", ticketsArray);
       setTickets(ticketsArray);
 
-      
       const totalTicketCount = ticketsArray.length;
       const openedTicketCount = ticketsArray.filter(
         (ticket) => ticket.status === "Opened"
@@ -135,7 +131,6 @@ export default function Tickets() {
         Rated: ratedTicketResponse.starred_ticket_count || 0,
       }));
 
-      
       const ticketCountResponse = await getTicketCount();
       console.log("Ticket Count Response:", ticketCountResponse);
       setTicketData((prevState) => ({
@@ -150,29 +145,53 @@ export default function Tickets() {
     }
   };
 
-
   useEffect(() => {
-    fetchData();
+     fetchData();
   }, []);
-  
-    const handleRemarkChange = (ticketId,  newRemark) => {
-      setTicketRemarks((prevRemarks) => ({
-        ...prevRemarks,
-        [ticketId]: newRemark,
-      }));
-    };
 
-    const handleSaveRemark = async (ticketId) => {
-      try {
-        const remark = ticketRemarks[ticketId] || "";
-        await saveTicketRemark(ticketId, remark);
-        alert("Remark saved successfully!");
-        fetchData(); 
-      } catch (error) {
-        console.error("Error saving remark:", error);
+  const handleRemarkChange = (ticketId, agent_remarks) => {
+    setTicketRemarks((prevRemarks) => ({
+      ...prevRemarks,
+      [ticketId]: agent_remarks,
+    }));
+  };
+
+  const handleSaveRemark = async (ticketId) => {
+    try {
+      if (!ticketId) {
+        console.error("Error: Ticket ID is missing!");
+        return;
       }
-    };
 
+      // Fetch the latest remark for this ticket
+      console.log(`Fetching remark for ticketId: ${ticketId}`);
+      const existingRemark = await getTicketRemark(ticketId);
+      console.log("Existing Remark:", existingRemark);
+
+      // Get the new remark from input field
+      const agent_remarks = ticketRemarks[ticketId] || "";
+      console.log("New Remark to Save:", agent_remarks);
+
+      // Only save if new remark is different
+      if (agent_remarks.trim() === existingRemark.trim()) {
+        alert("No changes detected in the remark.");
+        return;
+      }
+
+      // Save the new remark
+      await saveTicketRemark(ticketId, agent_remarks);
+      alert("Remark saved successfully!");
+
+    // Fetch latest remark from API and update the UI
+    const updatedRemark = await getTicketRemark(ticketId);
+    setTicketRemarks((prev) => ({
+      ...prev,
+      [ticketId]: updatedRemark,
+    }));
+  } catch (error) {
+    console.error("Error saving remark:", error);
+  }
+};
 
   const filteredTickets = tickets
     .filter(
@@ -182,7 +201,6 @@ export default function Tickets() {
       (a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()
     );
 
-  
   // Bar Chart Data
   const barChartData = [
     { name: "Total", Total: ticketData.ticket_count },
@@ -326,10 +344,10 @@ export default function Tickets() {
                       style={{
                         position: "sticky",
                         top: 0,
-                        zIndex: 1000, 
-                       
-                        background: "white", 
-                        boxShadow: "0px 2px 5px rgba(0,0,0,0.1)", 
+                        zIndex: 1000,
+
+                        background: "white",
+                        boxShadow: "0px 2px 5px rgba(0,0,0,0.1)",
                       }}
                     >
                       <tr>
@@ -352,7 +370,6 @@ export default function Tickets() {
                     </thead>
                     <tbody>
                       {loading ? (
-                    
                         [...Array(5)].map((_, index) => (
                           <tr key={index} className="placeholder-glow">
                             <td>
@@ -402,28 +419,37 @@ export default function Tickets() {
                             {/* <td>
                               <input
                                 type="text"
-                                value={ticket.remark || "No remark"}
+                                value={ticket.agent_remarks || "No remark"}
                                 onChange={(e) =>
                                   handleRemarkChange(
                                     ticket.ticket_id,
-                                    e.target.value,
-                                    ticket.status
-                                  )
+                                    e.target.value)
+                                   
+                                  
                                 }
                                 className="form-control"
                               />
                             </td> */}
-                           <td>
-                          <input
-                            type="text"
-                            value={ticketRemarks[ticket.ticket_id] || ticket.remark || "No remark"}
-                            onChange={(e) =>
-                              handleRemarkChange(ticket.ticket_id, e.target.value)
-                            }
-                            className="form-control"
-                          />
-                        
-                        </td>
+                            <td>
+                              <input
+                                type="text"
+                                value={
+                                  ticketRemarks[ticket.ticket_id] ??
+                                  ticket.agent_remarks ??
+                                  "No remark"
+                                }
+                                onChange={(e) =>
+                                  handleRemarkChange(
+                                    ticket.ticket_id,
+                                    e.target.value
+                                  )
+                                }
+                                onBlur={() =>
+                                  handleSaveRemark(ticket.ticket_id)
+                                }
+                                className="form-control"
+                              />
+                            </td>
 
                             <td>
                               <span
