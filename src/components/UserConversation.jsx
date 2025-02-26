@@ -6,11 +6,10 @@ import {
   getStarredTicketCount,
   getTicketUserInfo,
   getConversationDuration,
-  getUserConversation, 
+  getUserConversation,
   getTicketRemark,
-  saveTicketRemark
-  
-} from "../services/Services"; 
+  saveTicketRemark,
+} from "../services/Services";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import {
@@ -22,23 +21,27 @@ import {
   // FaToggleOn,
   // FaToggleOff,
   FaCheckSquare,
-   FaRegSquare 
+  FaRegSquare,
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaClock ,
 } from "react-icons/fa";
 
-const UserConversation = ({ updateStarredCount, }) => {
+const UserConversation = ({ updateStarredCount }) => {
   const [conversation, setConversation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [remark, setRemark] = useState(""); 
-  const [status, setStatus] = useState(""); 
-  const [rated, setRated] = useState(false); 
+  const [remark, setRemark] = useState("");
+  const [status, setStatus] = useState("");
+  const [rated, setRated] = useState(false);
   const [starredCount, setStarredCount] = useState(0);
   const [userDetails, setUserDetails] = useState(null);
   const [remarksList, setRemarksList] = useState([]);
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const userId = queryParams.get("user_id"); 
+  const userId = queryParams.get("user_id");
 
   const navigate = useNavigate();
 
@@ -47,9 +50,9 @@ const UserConversation = ({ updateStarredCount, }) => {
       try {
         setLoading(true);
         const data = await getUserConversation(userId);
-        setConversation(data.user_conversation); 
+        setConversation(data.user_conversation);
         if (data.is_important !== undefined) {
-          setRated(data.is_important); 
+          setRated(data.is_important);
         }
       } catch (err) {
         setError("Error fetching conversation.");
@@ -57,16 +60,16 @@ const UserConversation = ({ updateStarredCount, }) => {
         setLoading(false);
       }
     };
-   
+
     const fetchUserDetails = async () => {
       if (!userId) return;
-    
+
       setLoading(true);
       try {
         const data = await getTicketUserInfo(userId);
-    
+
         if (data && typeof data === "object") {
-          setUserDetails(data); 
+          setUserDetails(data);
           console.log("Fetched user details:", data);
         } else {
           setError("No user details found.");
@@ -79,10 +82,6 @@ const UserConversation = ({ updateStarredCount, }) => {
         setLoading(false);
       }
     };
-    
-
-    
-    
 
     const fetchStarredCount = async () => {
       try {
@@ -122,11 +121,11 @@ const UserConversation = ({ updateStarredCount, }) => {
       fetchConversationDuration();
       fetchRemarks();
     }
-  }, [userId,updateStarredCount]);
+  }, [userId, updateStarredCount]);
   // Handle rated toggle change
 
   const handleCheckboxChange = () => {
-    setRated(prev => !prev);
+    setRated((prev) => !prev);
   };
 
   const handleSubmit = async (e) => {
@@ -160,45 +159,44 @@ const UserConversation = ({ updateStarredCount, }) => {
     }
   };
 
-
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
   //   setLoading(true);
 
-    // try {
-    //   if (rated) {
-    //     await markAsImportant(userId);
-    //   } else {
-    //     await unMarkAsImportant(userId);
-    //   }
-      // await saveRemark(userId, remark); 
-      // const updatedRemarks = await getRemarks(userId); 
-      // setRemarksList(updatedRemarks.remarks || []);
-      // setRemark(""); 
+  // try {
+  //   if (rated) {
+  //     await markAsImportant(userId);
+  //   } else {
+  //     await unMarkAsImportant(userId);
+  //   }
+  // await saveRemark(userId, remark);
+  // const updatedRemarks = await getRemarks(userId);
+  // setRemarksList(updatedRemarks.remarks || []);
+  // setRemark("");
 
-          // Save the new remark
-    // await saveTicketRemark(userId, remark);
+  // Save the new remark
+  // await saveTicketRemark(userId, remark);
 
-    // Fetch updated remarks list
-    // const updatedRemarks = await getTicketRemark(userId);
-    // setRemarksList(updatedRemarks.remarks || []);
+  // Fetch updated remarks list
+  // const updatedRemarks = await getTicketRemark(userId);
+  // setRemarksList(updatedRemarks.remarks || []);
 
-    // Reset remark input after saving
-    // setRemark("");
-    // Fetch updated starred count
-    // const updatedCount = await getStarredTicketCount();
-    // updateStarredCount(updatedCount.starred_ticket_count);
+  // Reset remark input after saving
+  // setRemark("");
+  // Fetch updated starred count
+  // const updatedCount = await getStarredTicketCount();
+  // updateStarredCount(updatedCount.starred_ticket_count);
 
-    // ✅ Notify `Tickets.jsx` that a remark was added
-//     localStorage.setItem(`remark_${userId}`, remark);
+  // ✅ Notify `Tickets.jsx` that a remark was added
+  //     localStorage.setItem(`remark_${userId}`, remark);
 
-//     navigate("/Tickets", { replace: true });
-//   } catch (error) {
-//     console.error("Error submitting:", error);
-//   } finally {
-//     setLoading(false);
-//   }
-// };
+  //     navigate("/Tickets", { replace: true });
+  //   } catch (error) {
+  //     console.error("Error submitting:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // Handle remark change
   // const handleRemarkChange = (e) => {
@@ -218,7 +216,7 @@ const UserConversation = ({ updateStarredCount, }) => {
     <div className="container mt-5 justify-content-center text align-content-center">
       {/* Back Button */}
       <button
-        onClick={() => navigate(-1)} 
+        onClick={() => navigate(-1)}
         className="btn btn-secondary mb-3"
         style={{ position: "absolute", right: "100px", top: "90px" }}
       >
@@ -231,42 +229,49 @@ const UserConversation = ({ updateStarredCount, }) => {
           <FaClipboardList className="me-2" /> Details of Ticket ID: {userId}
         </h4>
         {/* User Details Table */}
-        
-         <div className="table-responsive">
-        <table className="table table-bordered text-center">
-          <thead className="thead-dark">
-            <tr>
-              {/* <th>ID</th> */}
-              <th>Customer name</th>
-              <th>Email</th>
-              <th>Contact</th>
-              <th>Conversation Duration</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
+
+        <div className="table-responsive">
+          <table className="table table-bordered text-center">
+            <thead className="thead-dark">
               <tr>
-                <td colSpan="5">Loading...</td>
+                {/* <th><FaIdBadge /> ID</th> */}
+                <th>
+                  <FaUser className="me-1" /> Customer Name
+                </th>
+                <th>
+                  <FaEnvelope className="me-1" /> Email
+                </th>
+                <th>
+                  <FaPhone className="me-1" /> Contact
+                </th>
+                <th>
+                  <FaClock className="me-1" /> Conversation Duration
+                </th>
               </tr>
-            ) : userDetails ? (
-              <tr>
-                 {console.log("Rendering user details:", userDetails)}
-                {/* <td>{userDetails.user_id}</td> */}
-                <td>{userDetails.user_name}</td>
-                <td>{userDetails.email}</td>
-                <td>{userDetails.contact}</td>
-                <td>{userDetails.conversation_duration}</td>
-              </tr>
-            ) : (
-              <tr>
-                {console.log("No user details available.")}
-                <td colSpan="5">No data available.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-   
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="5">Loading...</td>
+                </tr>
+              ) : userDetails ? (
+                <tr>
+                  {console.log("Rendering user details:", userDetails)}
+                  {/* <td>{userDetails.user_id}</td> */}
+                  <td>{userDetails.user_name}</td>
+                  <td>{userDetails.email}</td>
+                  <td>{userDetails.contact}</td>
+                  <td>{userDetails.conversation_duration}</td>
+                </tr>
+              ) : (
+                <tr>
+                  {console.log("No user details available.")}
+                  <td colSpan="5">No data available.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {/* Main content container */}
         <div>
@@ -297,8 +302,8 @@ const UserConversation = ({ updateStarredCount, }) => {
                 border: "1px solid #ddd",
                 padding: "10px",
                 borderRadius: "5px",
-                height: "400px", 
-                overflowY: "auto", 
+                height: "400px",
+                overflowY: "auto",
                 backgroundColor: "#f9f9f9",
               }}
             >
@@ -315,11 +320,10 @@ const UserConversation = ({ updateStarredCount, }) => {
                     marginBottom: "10px",
                     padding: "8px",
                     borderRadius: "5px",
-                    backgroundColor: isChatbotMessage ? "#f1f1f1" : "#e0f7fa", 
+                    backgroundColor: isChatbotMessage ? "#f1f1f1" : "#e0f7fa",
                     textAlign: isChatbotMessage ? "left" : "right",
                   };
 
-                 
                   const cleanedMessage = message
                     .replace(/^\[?Chatbot:?\s?/i, "")
                     .replace(/[\]'"]/g, "")
@@ -341,27 +345,56 @@ const UserConversation = ({ updateStarredCount, }) => {
 
           {/* Right side: Form */}
           <div className="form-container" style={{ flex: 1, padding: "20px" }}>
-          <form onSubmit={handleSubmit} className="mt-3">
-        <div className="form-group">
-          <label><FaComment /> Remark</label>
-          <textarea className="form-control" rows="3" value={remark} onChange={(e) => setRemark(e.target.value)} placeholder="Enter your remark" />
-        </div>
-        <div className="form-group mt-3">
-          <label><FaClipboardList /> Status</label>
-          <select className="form-control" value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="Pending">Pending</option>
-            <option value="Opened">Opened</option>
-            <option value="Closed">Closed</option>
-          </select>
-        </div>
-        <div className="form-group mt-3">
-          <label><FaExclamationTriangle /> Mark as Important:</label>
-          <span style={{ cursor: "pointer", fontSize: "1.5rem", marginLeft: "10px" }} onClick={handleCheckboxChange}>
-            {rated ? <FaCheckSquare className="text-success" /> : <FaRegSquare className="text-secondary" />}
-          </span>
-        </div>
-        <button type="submit" className="btn btn-primary mt-3">Submit</button>
-      </form>
+            <form onSubmit={handleSubmit} className="mt-3">
+              <div className="form-group">
+                <label>
+                  <FaComment /> Remark
+                </label>
+                <textarea
+                  className="form-control"
+                  rows="3"
+                  value={remark}
+                  onChange={(e) => setRemark(e.target.value)}
+                  placeholder="Enter your remark"
+                />
+              </div>
+              <div className="form-group mt-3">
+                <label>
+                  <FaClipboardList /> Status
+                </label>
+                <select
+                  className="form-control"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="Opened">Opened</option>
+                  <option value="Closed">Closed</option>
+                </select>
+              </div>
+              <div className="form-group mt-3">
+                <label>
+                  <FaExclamationTriangle /> Mark as Important:
+                </label>
+                <span
+                  style={{
+                    cursor: "pointer",
+                    fontSize: "1.5rem",
+                    marginLeft: "10px",
+                  }}
+                  onClick={handleCheckboxChange}
+                >
+                  {rated ? (
+                    <FaCheckSquare className="text-success" />
+                  ) : (
+                    <FaRegSquare className="text-secondary" />
+                  )}
+                </span>
+              </div>
+              <button type="submit" className="btn btn-primary mt-3">
+                Submit
+              </button>
+            </form>
           </div>
         </div>
       </div>
