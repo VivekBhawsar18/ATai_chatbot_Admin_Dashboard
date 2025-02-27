@@ -71,6 +71,7 @@ export default function Tickets() {
   const [filterStatus, setFilterStatus] = useState("All");
   const [starredCount, setStarredCount] = useState(0);
   const [ticketRemarks, setTicketRemarks] = useState([]);
+   const [remarksList, setRemarksList] = useState([]);
 
   const scrollContainerRef = useRef(null);
   const isDragging = useRef(false);
@@ -145,53 +146,84 @@ export default function Tickets() {
     }
   };
 
+  // const fetchRemarks = async () => {
+  //   try {
+  //     console.log("Fetching remarks for userId:", ticketId);
+  //     const response = await getTicketRemark(ticketId);
+  //     console.log("Remarks fetched:", response);
+  //     setRemarksList(response.agent_remarks || []);
+  //   } catch (err) {
+  //     console.error("Error fetching remarks:", err);
+  //   }
+  // };
+
   useEffect(() => {
      fetchData();
   }, []);
 
-  const handleRemarkChange = (ticketId, agent_remarks) => {
-    setTicketRemarks((prevRemarks) => ({
-      ...prevRemarks,
-      [ticketId]: agent_remarks,
-    }));
-  };
+  // const handleRemarkChange = (ticketId, agent_remarks) => {
+  //   setTicketRemarks((prevRemarks) => ({
+  //     ...prevRemarks,
+  //     [ticketId]: agent_remarks,
+  //   }));
+  // };
 
-  const handleSaveRemark = async (ticketId) => {
-    try {
-      if (!ticketId) {
-        console.error("Error: Ticket ID is missing!");
-        return;
-      }
+  // const handleSaveRemark = async (ticketId) => {
+  //   try {
+  //     if (!ticketId) {
+  //       console.error("Error: Ticket ID is missing!");
+  //       return;
+  //     }
 
-      // Fetch the latest remark for this ticket
-      console.log(`Fetching remark for ticketId: ${ticketId}`);
-      const existingRemark = await getTicketRemark(ticketId);
-      console.log("Existing Remark:", existingRemark);
+      // // Fetch the latest remark for this ticket
+      // console.log(`Fetching remark for ticketId: ${ticketId}`);
+      // const existingRemark = await getTicketRemark(ticketId);
+      // console.log("Existing Remark:", existingRemark);
 
-      // Get the new remark from input field
-      const agent_remarks = ticketRemarks[ticketId] || "";
-      console.log("New Remark to Save:", agent_remarks);
+      // // Get the new remark from input field
+      // const agent_remarks = ticketRemarks[ticketId] || "";
+      // console.log("New Remark to Save:", agent_remarks);
 
-      // Only save if new remark is different
-      if (agent_remarks.trim() === existingRemark.trim()) {
-        alert("No changes detected in the remark.");
-        return;
-      }
+      // // Only save if new remark is different
+      // if (agent_remarks.trim() === existingRemark.trim()) {
+      //   alert("No changes detected in the remark.");
+      //   return;
+      // }
 
       // Save the new remark
-      await saveTicketRemark(ticketId, agent_remarks);
-      alert("Remark saved successfully!");
+      // await saveTicketRemark(ticketId, agent_remarks);
+      // alert("Remark saved successfully!");
 
     // Fetch latest remark from API and update the UI
-    const updatedRemark = await getTicketRemark(ticketId);
-    setTicketRemarks((prev) => ({
-      ...prev,
-      [ticketId]: updatedRemark,
-    }));
-  } catch (error) {
-    console.error("Error saving remark:", error);
-  }
-};
+    // const updatedRemark = await getTicketRemark(ticketId);
+    // setTicketRemarks((prev) => ({
+    //   ...prev,
+    //   [ticketId]: updatedRemark,
+    // }));
+  // } catch (error) {
+  //   console.error("Error saving remark:", error);
+  // }
+// };
+
+      // Get the new remark from input field
+      const handleSaveRemark = async (ticketId) => {
+        try {
+          const agent_remarks = ticketRemarks[ticketId] || "";
+          console.log("New Remark to Save:", agent_remarks);
+      
+          await saveTicketRemark(ticketId, agent_remarks);
+          console.log("Saving remark...");
+      
+          console.log("Fetching updated remarks...");
+          const updatedRemarks = await getTicketRemark(ticketId);
+      
+          console.log("Updated Remarks:", updatedRemarks); // Fixed log
+          setRemarksList(updatedRemarks.agent_remarks || []);
+        } catch (error) {
+          console.error("Error saving remark:", error);
+        }
+      };
+      
 
   const filteredTickets = tickets
     .filter(
@@ -430,7 +462,7 @@ export default function Tickets() {
                                 className="form-control"
                               />
                             </td> */}
-                            <td>
+                            {/* <td>
                               <input
                                 type="text"
                                 value={
@@ -449,7 +481,8 @@ export default function Tickets() {
                                 }
                                 className="form-control"
                               />
-                            </td>
+                            </td> */}
+                             <td>{ticket.updatedRemarks??"No Remark"}</td>
 
                             <td>
                               <span
