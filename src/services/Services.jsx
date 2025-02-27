@@ -153,6 +153,6 @@ export const getTicketRemark = async (ticketId) => {
   //   `/tickets/get_remarks?ticket_id=${encodeURIComponent(ticketId)}`
   // );
   // return response.agent_remarks ?? "No remark available"; // Return a fallback message
-  return fetchData("GET",  `/tickets/get_remarks?ticket_id=${encodeURIComponent(ticketId)}`
+  return fetchData("GET",`/tickets/get_remarks?ticket_id=${encodeURIComponent(ticketId)}`
   );
 };

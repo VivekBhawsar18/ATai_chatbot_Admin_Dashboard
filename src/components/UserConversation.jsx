@@ -125,11 +125,26 @@ const UserConversation = ({ updateStarredCount }) => {
     }
   }, [userId, updateStarredCount]);
 
+  
+  // Handle remark change
+  const handleRemarkChange = (e) => {
+    console.log("Remark changed:", e.target.value);
+    set_agent_Remarks(e.target.value);
+  };
+
+  // Handle status change
+  const handleStatusChange = (e) => {
+    console.log("Status changed:", e.target.value);
+    setStatus(e.target.value);
+  };
+
   // Handle rated toggle change
   const handleCheckboxChange = () => {
     setRated((prev) => !prev);
     console.log("Rated toggle changed:", !rated);
   };
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -178,21 +193,7 @@ const UserConversation = ({ updateStarredCount }) => {
     }
   };
 
-  // Handle remark change
-  const handleRemarkChange = (e) => {
-    console.log("Remark changed:", e.target.value);
-    set_agent_Remarks(e.target.value);
-  };
-
-
   
-
-  // Handle status change
-  const handleStatusChange = (e) => {
-    console.log("Status changed:", e.target.value);
-    setStatus(e.target.value);
-  };
-
   // if (loading) return <div>Loading...</div>;
   // if (error) return <div>{error}</div>;
 
@@ -310,9 +311,9 @@ const UserConversation = ({ updateStarredCount }) => {
                   };
 
                   const cleanedMessage = message
-                    .replace(/^\[?Chatbot:?\s?/i, "")
-                    .replace(/[\]'"]/g, "")
-                    .trim();
+                  .replace(/^\[?Chatbot:?\s?/i, "") 
+                  .replace(/[\[\]'""]/g, "") 
+                  .trim();
                   return (
                     <div key={index} style={messageStyle}>
                       <FaComment className="me-1" /> {cleanedMessage}

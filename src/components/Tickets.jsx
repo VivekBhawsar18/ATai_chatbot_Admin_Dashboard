@@ -6,6 +6,7 @@ import {
   FaCheckCircle,
   FaStar,
   FaExclamationTriangle,
+  FaHourglassHalf,
 } from "react-icons/fa";
 import {
   BarChart,
@@ -68,10 +69,11 @@ export default function Tickets() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [updatedTickets, setUpdatedTickets] = useState([]);
-  const [filterStatus, setFilterStatus] = useState("All");
+
   const [starredCount, setStarredCount] = useState(0);
   const [ticketRemarks, setTicketRemarks] = useState([]);
-   const [remarksList, setRemarksList] = useState([]);
+  const [remarksList, setRemarksList] = useState([]);
+  const [filterStatus, setFilterStatus] = useState("Pending");
 
   const scrollContainerRef = useRef(null);
   const isDragging = useRef(false);
@@ -158,7 +160,7 @@ export default function Tickets() {
   // };
 
   useEffect(() => {
-     fetchData();
+    fetchData();
   }, []);
 
   // const handleRemarkChange = (ticketId, agent_remarks) => {
@@ -175,55 +177,54 @@ export default function Tickets() {
   //       return;
   //     }
 
-      // // Fetch the latest remark for this ticket
-      // console.log(`Fetching remark for ticketId: ${ticketId}`);
-      // const existingRemark = await getTicketRemark(ticketId);
-      // console.log("Existing Remark:", existingRemark);
+  // // Fetch the latest remark for this ticket
+  // console.log(`Fetching remark for ticketId: ${ticketId}`);
+  // const existingRemark = await getTicketRemark(ticketId);
+  // console.log("Existing Remark:", existingRemark);
 
-      // // Get the new remark from input field
-      // const agent_remarks = ticketRemarks[ticketId] || "";
-      // console.log("New Remark to Save:", agent_remarks);
+  // // Get the new remark from input field
+  // const agent_remarks = ticketRemarks[ticketId] || "";
+  // console.log("New Remark to Save:", agent_remarks);
 
-      // // Only save if new remark is different
-      // if (agent_remarks.trim() === existingRemark.trim()) {
-      //   alert("No changes detected in the remark.");
-      //   return;
-      // }
+  // // Only save if new remark is different
+  // if (agent_remarks.trim() === existingRemark.trim()) {
+  //   alert("No changes detected in the remark.");
+  //   return;
+  // }
 
-      // Save the new remark
-      // await saveTicketRemark(ticketId, agent_remarks);
-      // alert("Remark saved successfully!");
+  // Save the new remark
+  // await saveTicketRemark(ticketId, agent_remarks);
+  // alert("Remark saved successfully!");
 
-    // Fetch latest remark from API and update the UI
-    // const updatedRemark = await getTicketRemark(ticketId);
-    // setTicketRemarks((prev) => ({
-    //   ...prev,
-    //   [ticketId]: updatedRemark,
-    // }));
+  // Fetch latest remark from API and update the UI
+  // const updatedRemark = await getTicketRemark(ticketId);
+  // setTicketRemarks((prev) => ({
+  //   ...prev,
+  //   [ticketId]: updatedRemark,
+  // }));
   // } catch (error) {
   //   console.error("Error saving remark:", error);
   // }
-// };
+  // };
 
-      // Get the new remark from input field
-      const handleSaveRemark = async (ticketId) => {
-        try {
-          const agent_remarks = ticketRemarks[ticketId] || "";
-          console.log("New Remark to Save:", agent_remarks);
-      
-          await saveTicketRemark(ticketId, agent_remarks);
-          console.log("Saving remark...");
-      
-          console.log("Fetching updated remarks...");
-          const updatedRemarks = await getTicketRemark(ticketId);
-      
-          console.log("Updated Remarks:", updatedRemarks); // Fixed log
-          setRemarksList(updatedRemarks.agent_remarks || []);
-        } catch (error) {
-          console.error("Error saving remark:", error);
-        }
-      };
-      
+  // Get the new remark from input field
+  const handleSaveRemark = async (ticketId) => {
+    try {
+      const agent_remarks = ticketRemarks[ticketId] || "";
+      console.log("New Remark to Save:", agent_remarks);
+
+      await saveTicketRemark(ticketId, agent_remarks);
+      console.log("Saving remark...");
+
+      console.log("Fetching updated remarks...");
+      const updatedRemarks = await getTicketRemark(ticketId);
+
+      console.log("Updated Remarks:", updatedRemarks); // Fixed log
+      setRemarksList(updatedRemarks.agent_remarks || []);
+    } catch (error) {
+      console.error("Error saving remark:", error);
+    }
+  };
 
   const filteredTickets = tickets
     .filter(
@@ -322,29 +323,34 @@ export default function Tickets() {
             <div className="bg-white p-3 rounded shadow mb-4">
               {/* Filter Buttons */}
               <div className="text-center my-2">
-                {["All", "Opened", "Closed"].map((status) => (
+                {["All", "Pending", "Opened", "Closed"].map((status) => (
                   <button
                     key={status}
                     className={`btn mx-2 ${
                       filterStatus === status
                         ? `btn-${
-                            status === "All"
-                              ? "primary"
+                            status === "Pending"
+                              ? "outline-warning" // Pending remains outlined
                               : status === "Opened"
                               ? "success"
-                              : "danger"
+                              : status === "Closed"
+                              ? "danger"
+                              : "primary"
                           }`
                         : `btn-outline-${
-                            status === "All"
-                              ? "primary"
-                              : status === "Opened"
+                            status === "Opened"
                               ? "success"
-                              : "danger"
+                              : status === "Closed"
+                              ? "danger"
+                              : "primary"
                           }`
                     }`}
                     onClick={() => setFilterStatus(status)}
                   >
                     {status === "All" && <FaBriefcase className="me-1" />}
+                    {status === "Pending" && (
+                      <FaHourglassHalf className="me-1" />
+                    )}
                     {status === "Opened" && <FaEnvelope className="me-1" />}
                     {status === "Closed" && <FaCheckCircle className="me-1" />}
                     {status}
@@ -482,22 +488,28 @@ export default function Tickets() {
                                 className="form-control"
                               />
                             </td> */}
-                             <td>{ticket.updatedRemarks??"No Remark"}</td>
+                            <td>{ticket.updatedRemarks ?? "No Remark"}</td>
 
                             <td>
                               <span
                                 className={`badge bg-${
-                                  ticket.status === "Opened"
+                                  ticket.status === "Pending"
+                                    ? "warning"
+                                    : ticket.status === "Opened"
                                     ? "success"
                                     : "danger"
                                 }`}
                                 style={{ cursor: "pointer" }}
                               >
-                                {ticket.status === "Opened" ? (
+                                {ticket.status === "Pending" && (
+                                  <FaHourglassHalf className="me-1" />
+                                )}
+                                {ticket.status === "Opened" && (
                                   <FaEnvelope className="me-1" />
-                                ) : (
+                                )}
+                                {ticket.status === "Closed" && (
                                   <FaCheckCircle className="me-1" />
-                                )}{" "}
+                                )}
                                 {ticket.status}
                               </span>
                             </td>
