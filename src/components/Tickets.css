@@ -1,0 +1,172 @@
+/* Container */
+.tickets-container {
+    margin-top: 20px;
+  }
+  
+  /* Page Title */
+  .ticket-summary-title {
+    text-align: center;
+    margin-top: 16px;
+    color: #007bff;
+  }
+  
+  /* Ticket Summary Section */
+  .ticket-summary-section {
+    margin-top: 20px;
+  }
+  
+  /* Dashboard Cards */
+  .dashboard-card {
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Bar Chart Container */
+  .bar-chart-container {
+    background-color: white;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Filter Button Container */
+  .filter-button-container {
+    text-align: center;
+    margin: 20px 10;
+  }
+  
+  /* Filter Buttons */
+  .filter-button {
+    margin: 5px;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  
+  /* Active Filter */
+  .filter-button-active {
+    background-color: #007bff;
+    color: white;
+    border: none;
+  }
+  
+  .filter-button-outline {
+    background-color: white;
+    color: #007bff;
+    border: 2px solid #007bff;
+  }
+  
+  /* Table Container */
+  .table-container {
+    max-height: 400px; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: white;
+  }
+  /* Table Container with Scroll */
+.table-container {
+    max-height: 400px; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: white;
+  }
+  
+  /* Scrollbar Styling */
+  .table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    border-radius: 4px;
+  }
+  
+  .table-container::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  /* Table */
+  .ticket-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .ticket-table th,
+  .ticket-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .ticket-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: white;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Table Row */
+  .ticket-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  /* Status Badge */
+  .status-badge {
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  
+  /* Status Colors */
+  .status-badge-warning {
+    background-color: #ffc107;
+    color: black;
+  }
+  
+  .status-badge-success {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .status-badge-danger {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  /* Pagination */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .pagination-button {
+    padding: 8px 16px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 5px;
+  }
+  
+  .pagination-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+  

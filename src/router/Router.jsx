@@ -14,7 +14,8 @@ import UnAnsweredTicket from "../components/UnAnsweredTicket";
 import UserConversation from "../components/UserConversation";
 import Callbackrequest from "../components/Callbackrequest";
 import FAQdashboard from "../components/FAQdashboard";
-import Help from "../components/Help"
+import Help from "../components/Help";
+import UploadCSV from "../components/UploadCSV"
 
 export default function Router() {
   return (
@@ -38,6 +39,7 @@ export default function Router() {
           <Route path="/Callbackrequest" element={<Callbackrequest/>}/>
           <Route path="/user_conversation" element={<UserConversation/>} />
           <Route path="/Help" element={<Help/>}/>
+          <Route path="/UploadCSV" element={<UploadCSV/>}/>
         </Route>
 
         

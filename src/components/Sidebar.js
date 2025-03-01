@@ -3,8 +3,10 @@ import { Link, useLocation } from "react-router-dom";
 
 export default function Sidebar() {
   const links = [
+    
     { name: "Tickets", url: "/Tickets", icon: "fas fa-ticket-alt" }, 
     { name: "Callback Request", url: "/Callbackrequest", icon: "fas fa-phone-alt" }, 
+    { name: "Upload CSV Or FAQ  ", url: "/UploadCSV", icon: "fa-solid fa-upload" },
     { name: "Help and Support", url: "/help", icon: "fas fa-question-circle" }, 
   ];
 
@@ -109,7 +111,7 @@ const styles = {
   },
   activeNavLink: {
     backgroundColor: " #0056b3", 
-    paddingLeft: "25px", 
+    padding: "25px", 
   },
   icon: {
     marginRight: "10px", 

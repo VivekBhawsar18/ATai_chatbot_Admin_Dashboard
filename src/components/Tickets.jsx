@@ -1,13 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
+import Skeleton from "react-loading-skeleton";
+import ReactPaginate from "react-paginate";
+import "./Tickets.css"
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaBriefcase,
   FaEnvelope,
   FaCheckCircle,
   FaStar,
-  FaExclamationTriangle,
-  FaHourglassHalf,
+ FaArrowLeft,
+  FaArrowRight,
 } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+ faFileAlt,
+  faClock,
+  faComment,
+  faInfoCircle,
+  faHashtag,} from "@fortawesome/free-solid-svg-icons";
 import {
   BarChart,
   Bar,
@@ -75,26 +85,30 @@ export default function Tickets() {
   const [remarksList, setRemarksList] = useState([]);
   const [filterStatus, setFilterStatus] = useState("Pending");
 
-  const scrollContainerRef = useRef(null);
-  const isDragging = useRef(false);
-  const startPos = useRef(0);
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(0);
+    const ticketsPerPage = 5; // Only 5 tickets per page
 
-  const handleMouseDown = (e) => {
-    isDragging.current = true;
-    startPos.current = e.clientY;
-  };
+  // const scrollContainerRef = useRef(null);
+  // const isDragging = useRef(false);
+  // const startPos = useRef(0);
 
-  const handleMouseMove = (e) => {
-    if (isDragging.current && scrollContainerRef.current) {
-      const deltaY = startPos.current - e.clientY;
-      scrollContainerRef.current.scrollTop += deltaY;
-      startPos.current = e.clientY;
-    }
-  };
+  // const handleMouseDown = (e) => {
+  //   isDragging.current = true;
+  //   startPos.current = e.clientY;
+  // };
 
-  const handleMouseUpOrLeave = () => {
-    isDragging.current = false;
-  };
+  // const handleMouseMove = (e) => {
+  //   if (isDragging.current && scrollContainerRef.current) {
+  //     const deltaY = startPos.current - e.clientY;
+  //     scrollContainerRef.current.scrollTop += deltaY;
+  //     startPos.current = e.clientY;
+  //   }
+  // };
+
+  // const handleMouseUpOrLeave = () => {
+  //   isDragging.current = false;
+  // };
 
   const fetchData = async () => {
     setLoading(true);
@@ -140,6 +154,9 @@ export default function Tickets() {
         ...prevState,
         ticket_count: ticketCountResponse.ticket_count || 0,
       }));
+
+
+
     } catch (error) {
       console.error("Error fetching ticket data:", error);
       setError(error.message || "An error occurred while fetching data.");
@@ -158,6 +175,9 @@ export default function Tickets() {
   //     console.error("Error fetching remarks:", err);
   //   }
   // };
+  
+  
+
 
   useEffect(() => {
     fetchData();
@@ -226,13 +246,36 @@ export default function Tickets() {
     }
   };
 
-  const filteredTickets = tickets
-    .filter(
-      (ticket) => filterStatus === "All" || ticket.status === filterStatus
-    )
-    .sort(
-      (a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()
-    );
+    // Filter tickets based on status
+    const filteredTickets = tickets.filter(
+      (tickets) => filterStatus === "All" || tickets.status === filterStatus)
+      .sort(
+        (a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()
+      );
+    
+  
+    // Calculate total pages
+    const totalPages = Math.ceil(filteredTickets.length / ticketsPerPage);
+    const startIndex = currentPage * ticketsPerPage;
+    const currentTickets = filteredTickets.slice(startIndex, startIndex + ticketsPerPage);
+  
+    // Handle next & previous page navigation
+    const handleNextPage = () => {
+      if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
+    };
+  
+    const handlePrevPage = () => {
+      if (currentPage > 0) setCurrentPage(currentPage - 1);
+    };
+  
+
+  // const filteredTickets = tickets
+  //   .filter(
+  //     (ticket) => filterStatus === "All" || ticket.status === filterStatus
+  //   )
+  //   .sort(
+  //     (a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()
+  //   );
 
   // Bar Chart Data
   const barChartData = [
@@ -242,295 +285,171 @@ export default function Tickets() {
     { name: "Rated", Rated: ticketData.Rated },
   ];
 
-  return (
-    <div>
-      <h4 className="text-center mt-4 text-primary">Tickets Summary</h4>
-      <div className="container mt-5">
-        <div>
+  
+    return (
+      <div className="tickets-container">
+        {/* Page Title */}
+        <h4 className="ticket-summary-title">Tickets Summary</h4>
+    
+        <div className="container ticket-summary-section">
           <div className="row g-4 d-flex align-items-stretch">
-            {/* Ticket Summary */}
-            <div className="col-12 col-md-6 ">
+    
+            {/* Ticket Summary Cards */}
+            <div className="col-12 col-md-6">
               <div className="row g-4">
-                {links.map((link) => {
-                  const Icon = link.icon;
-                  const ticketCount =
-                    link.name === "Total"
-                      ? ticketData.ticket_count
-                      : ticketData[link.name] || 0;
-
-                  return (
-                    <div key={link.name} className="col-6  text-center">
-                      <Link to={link.url} className="text-decoration-none">
-                        <div
-                          className={`dashboard-card ${link.bgColor} text-white p-4 rounded shadow`}
-                        >
-                          <Icon size="2rem" />
-                          <h5>{link.name}</h5>
-                          <p style={{ fontSize: "2rem", fontWeight: "bold" }}>
-                            {ticketCount}
-                          </p>
-                        </div>
-                      </Link>
+                {loading ? (
+                  [...Array(4)].map((_, index) => (
+                    <div key={index} className="col-6 text-center">
+                      <Skeleton height={120} width="100%" />
                     </div>
-                  );
-                })}
+                  ))
+                ) : (
+                  links.map((link) => {
+                    const Icon = link.icon;
+                    const ticketCount =
+                      link.name === "Total"
+                        ? ticketData.ticket_count
+                        : ticketData[link.name] || 0;
+    
+                    return (
+                      <div key={link.name} className="col-6 text-center">
+                        <Link to={link.url} className="text-decoration-none">
+                          <div className={`dashboard-card ${link.bgColor}`}>
+                            <Icon size="2rem" />
+                            <h5>{link.name}</h5>
+                            <p>{ticketCount}</p>
+                          </div>
+                        </Link>
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </div>
-
+    
             {/* Bar Chart */}
             <div className="col-12 col-md-6">
-              <div className="bg-white p-4 rounded shadow">
+              <div className="bar-chart-container">
                 <h5 className="text-center">Tickets Overview</h5>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart
-                    data={barChartData}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 50 }}
-                    barCategoryGap="0%" // Ensures bars are closely aligned
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" minTickGap={0} />
-                    <YAxis domain={[0, "dataMax"]} />
-                    <Tooltip />
-                    <Legend />
-                    <Bar
-                      dataKey="Total"
-                      fill="#007bff"
-                      barSize={50}
-                      name="Total Tickets"
-                    />
-                    <Bar
-                      dataKey="Opened"
-                      fill="#28a745"
-                      barSize={50}
-                      name="Opened Tickets"
-                    />
-                    <Bar
-                      dataKey="Closed"
-                      fill="#dc3545"
-                      barSize={50}
-                      name="Closed Tickets"
-                    />
-                    <Bar
-                      dataKey="Rated"
-                      fill="#54B4D3"
-                      barSize={50}
-                      name="Rated Tickets"
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
+                {loading ? (
+                  <Skeleton height={300} />
+                ) : (
+                  <ResponsiveContainer width="100%" height={260}>
+                    <BarChart data={barChartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis domain={[0, "dataMax"]} />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="Total" fill="#007bff" name="Total Tickets" />
+                      <Bar dataKey="Opened" fill="#28a745" name="Opened Tickets" />
+                      <Bar dataKey="Closed" fill="#dc3545" name="Closed Tickets" />
+                      <Bar dataKey="Rated" fill="#54B4D3" name="Rated Tickets" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
               </div>
             </div>
-            <div className="bg-white p-3 rounded shadow mb-4">
-              {/* Filter Buttons */}
-              <div className="text-center my-2">
-                {["All", "Pending", "Opened", "Closed"].map((status) => (
-                  <button
-                    key={status}
-                    className={`btn mx-2 ${
-                      filterStatus === status
-                        ? `btn-${
-                            status === "Pending"
-                              ? "outline-warning" // Pending remains outlined
-                              : status === "Opened"
-                              ? "success"
-                              : status === "Closed"
-                              ? "danger"
-                              : "primary"
-                          }`
-                        : `btn-outline-${
-                            status === "Opened"
-                              ? "success"
-                              : status === "Closed"
-                              ? "danger"
-                              : "primary"
-                          }`
-                    }`}
-                    onClick={() => setFilterStatus(status)}
-                  >
-                    {status === "All" && <FaBriefcase className="me-1" />}
-                    {status === "Pending" && (
-                      <FaHourglassHalf className="me-1" />
-                    )}
-                    {status === "Opened" && <FaEnvelope className="me-1" />}
-                    {status === "Closed" && <FaCheckCircle className="me-1" />}
-                    {status}
-                  </button>
-                ))}
-              </div>
-
-              <div
-                ref={scrollContainerRef}
-                style={{
-                  maxHeight: "400px",
-                  overflowY: "auto",
-                  border: "1px solid #ccc",
-                  borderRadius: "16px",
-                  position: "relative", // Ensures sticky positioning works inside
+            {/* Filter Buttons */}
+          <div className="filter-button-container">
+            {["All", "Pending", "Opened", "Closed"].map((status) => (
+              <button
+                key={status}
+                className={`filter-button ${
+                  filterStatus === status ? "filter-button-active" : "filter-button-outline"
+                }`}
+                onClick={() => {
+                  setFilterStatus(status);
+                  setCurrentPage(0);
                 }}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUpOrLeave}
-                onMouseLeave={handleMouseUpOrLeave}
               >
-                <div className="table-responsive">
-                  <table
-                    className="table table-bordered table-striped"
-                    style={{ width: "100%" }}
-                  >
-                    <thead
-                      className="bg-light"
-                      style={{
-                        position: "sticky",
-                        top: 0,
-                        zIndex: 1000,
-
-                        background: "white",
-                        boxShadow: "0px 2px 5px rgba(0,0,0,0.1)",
-                      }}
-                    >
-                      <tr>
-                        <th>
-                          <i className="fas fa-hashtag"></i> ID
-                        </th>
-                        <th>
-                          <i className="fas fa-file-alt"></i> Title
-                        </th>
-                        <th>
-                          <i className="fas fa-clock"></i> Updated
-                        </th>
-                        <th>
-                          <i className="fas fa-comment"></i> Remark
-                        </th>
-                        <th>
-                          <i className="fas fa-info-circle"></i> Status
-                        </th>
+                {status}
+              </button>
+            ))}
+          </div>
+    
+          {/* Tickets Table with Scroll */}
+          <div className="bg-white p-3 rounded shadow mb-4">
+            <div className="table-container">
+              <table className="ticket-table">
+                {/* Sticky Header */}
+                <thead>
+  <tr>
+    <th><FontAwesomeIcon icon={faHashtag} /> ID</th>
+    <th><FontAwesomeIcon icon={faFileAlt} /> Title</th>
+    <th><FontAwesomeIcon icon={faClock} /> Updated</th>
+    <th><FontAwesomeIcon icon={faComment} /> Remark</th>
+    <th><FontAwesomeIcon icon={faInfoCircle} /> Status</th>
+  </tr>
+</thead>
+    
+                {/* Table Body */}
+                <tbody>
+                  {loading ? (
+                    [...Array(5)].map((_, index) => (
+                      <tr key={index}>
+                        <td><Skeleton width={50} /></td>
+                        <td><Skeleton width="80%" /></td>
+                        <td><Skeleton width={100} /></td>
+                        <td><Skeleton width="60%" /></td>
+                        <td><Skeleton width={80} /></td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {loading ? (
-                        [...Array(5)].map((_, index) => (
-                          <tr key={index} className="placeholder-glow">
-                            <td>
-                              <span className="placeholder col-6"></span>
-                            </td>
-                            <td>
-                              <span className="placeholder col-8"></span>
-                            </td>
-                            <td>
-                              <span className="placeholder col-6"></span>
-                            </td>
-                            <td>
-                              <span className="placeholder col-8"></span>
-                            </td>
-                            <td>
-                              <span className="placeholder col-3"></span>
-                            </td>
-                          </tr>
-                        ))
-                      ) : filteredTickets.length > 0 ? (
-                        filteredTickets.map((ticket) => (
-                          <tr key={ticket.ticket_id}>
-                            <td>
-                              <Link
-                                to={`/user_conversation?user_id=${encodeURIComponent(
-                                  ticket.ticket_id
-                                )}`}
-                              >
-                                {ticket.ticket_id}
-                              </Link>
-                            </td>
-                            <td>{ticket.ticket_title}</td>
-                            <td>
-                              {new Date(ticket.updated).toLocaleDateString(
-                                "en-GB"
-                              )}
-                              <br />
-                              {new Date(ticket.updated).toLocaleTimeString(
-                                "en-US",
-                                {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  hour12: true,
-                                }
-                              )}
-                            </td>
-                            {/* <td>
-                              <input
-                                type="text"
-                                value={ticket.agent_remarks || "No remark"}
-                                onChange={(e) =>
-                                  handleRemarkChange(
-                                    ticket.ticket_id,
-                                    e.target.value)
-                                   
-                                  
-                                }
-                                className="form-control"
-                              />
-                            </td> */}
-                            {/* <td>
-                              <input
-                                type="text"
-                                value={
-                                  ticketRemarks[ticket.ticket_id] ??
-                                  ticket.agent_remarks ??
-                                  "No remark"
-                                }
-                                onChange={(e) =>
-                                  handleRemarkChange(
-                                    ticket.ticket_id,
-                                    e.target.value
-                                  )
-                                }
-                                onBlur={() =>
-                                  handleSaveRemark(ticket.ticket_id)
-                                }
-                                className="form-control"
-                              />
-                            </td> */}
-                            <td>{ticket.updatedRemarks ?? "No Remark"}</td>
-
-                            <td>
-                              <span
-                                className={`badge bg-${
-                                  ticket.status === "Pending"
-                                    ? "warning"
-                                    : ticket.status === "Opened"
-                                    ? "success"
-                                    : "danger"
-                                }`}
-                                style={{ cursor: "pointer" }}
-                              >
-                                {ticket.status === "Pending" && (
-                                  <FaHourglassHalf className="me-1" />
-                                )}
-                                {ticket.status === "Opened" && (
-                                  <FaEnvelope className="me-1" />
-                                )}
-                                {ticket.status === "Closed" && (
-                                  <FaCheckCircle className="me-1" />
-                                )}
-                                {ticket.status}
-                              </span>
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="5" className="text-center">
-                            <FaExclamationTriangle className="text-warning me-2" />{" "}
-                            No Tickets available.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                    ))
+                  ) : currentTickets.length > 0 ? (
+                    currentTickets.map((ticket) => (
+                      <tr key={ticket.ticket_id}>
+                        <td>
+                          <Link to={`/user_conversation?user_id=${ticket.ticket_id}`}>
+                            {ticket.ticket_id}
+                          </Link>
+                        </td>
+                        <td>{ticket.ticket_title}</td>
+                        <td>
+                          {new Date(ticket.updated).toLocaleDateString("en-GB")}
+                          <br />
+                          {new Date(ticket.updated).toLocaleTimeString("en-US", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          })}
+                        </td>
+                        <td>{ticket.updatedRemarks ?? "No Remark"}</td>
+                        <td>
+                          <span className={`status-badge ${
+                            ticket.status === "Pending" ? "status-badge-warning" :
+                            ticket.status === "Opened" ? "status-badge-success" :
+                            "status-badge-danger"
+                          }`}>
+                            {ticket.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5">No Tickets available.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
+    
+          {/* Pagination */}
+          <div className="pagination-container">
+            <button className="pagination-button" onClick={handlePrevPage} disabled={currentPage === 0}>
+              <FaArrowLeft /> Previous
+            </button>
+            <span>Page {currentPage + 1} of {totalPages || 1}</span>
+            <button className="pagination-button" onClick={handleNextPage} disabled={currentPage >= totalPages - 1}>
+              Next <FaArrowRight />
+            </button>
+          </div>
+          </div>
+    
+          
         </div>
       </div>
-    </div>
-  );
+    );
+    
 }

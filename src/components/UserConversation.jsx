@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import "./UserConversation.css";
 import {
   markAsImportant,
   unMarkAsImportant,
@@ -9,6 +10,7 @@ import {
   getUserConversation,
   getTicketRemark,
   saveTicketRemark,
+  updateResolutionStatus,
 } from "../services/Services";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -33,7 +35,7 @@ const UserConversation = ({ updateStarredCount }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [agent_remarks, set_agent_Remarks] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("Pending");
   const [rated, setRated] = useState(false);
   const [starredCount, setStarredCount] = useState(0);
   const [userDetails, setUserDetails] = useState(null);
@@ -133,9 +135,23 @@ const UserConversation = ({ updateStarredCount }) => {
   };
 
   // Handle status change
-  const handleStatusChange = (e) => {
-    console.log("Status changed:", e.target.value);
-    setStatus(e.target.value);
+  // const handleStatusChange = (e) => {
+  //   console.log("Status changed:", e.target.value);
+  //   setStatus(e.target.value);
+  // };
+
+  /** Handle Status Change */
+  const handleStatusChange = async (e) => {
+    const newStatus = e.target.value;
+    setStatus(newStatus);
+
+    try {
+      console.log(`Updating resolution status for userId: ${userId} to ${newStatus}`);
+      const response = await updateResolutionStatus(userId, newStatus);
+      console.log("Resolution status updated successfully:", response);
+    } catch (error) {
+      console.error("Error updating resolution status:", error);
+    }
   };
 
   // Handle rated toggle change
@@ -149,12 +165,14 @@ const UserConversation = ({ updateStarredCount }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    console.log("Calling API with userId:", userId);
 
     console.log("Form submitted with values:");
     console.log("userId:", userId);
     console.log("agent_remarks:", agent_remarks);
+    console.log("status:",status);
     console.log("rated:", rated);
-
+  
     try {
       if (rated) {
         console.log("Marking as important...");
@@ -163,26 +181,29 @@ const UserConversation = ({ updateStarredCount }) => {
         console.log("Unmarking as important...");
         await unMarkAsImportant(userId);
       }
-
+  
       console.log("Saving remark...");
       await saveTicketRemark(userId, agent_remarks);
 
       console.log("Fetching updated remarks...");
       const updatedRemarks = await getTicketRemark(userId);
-      console.log("Updated Remarks:", agent_remarks);
+      console.log("Updated Remarks:", updatedRemarks);
+  
       setRemarksList(updatedRemarks.agent_remarks || []);
-
+  
       console.log("Resetting agent_remarks...");
-      set_agent_Remarks("agent_remarks");
-
-      console.log("Fetching updated starred ticket count...");
+      set_agent_Remarks("");
+  
+      // console.log("Fetching updated starred ticket count...");
       const updatedCount = await getStarredTicketCount();
-      console.log("Updated Starred Ticket Count:", updatedCount);
-      updateStarredCount(updatedCount.starred_ticket_count);
-
+     
+      
+      setStarredCount(updatedCount.starred_ticket_count);
+      console.log("Updated Starred Ticket Count:", updatedCount.starred_ticket_count);
+  
       console.log("Saving remark to localStorage...");
       localStorage.setItem(`remark_${userId}`, agent_remarks);
-
+  
       console.log("Navigating to Tickets.jsx...");
       navigate("/Tickets", { replace: true });
     } catch (error) {
@@ -192,6 +213,7 @@ const UserConversation = ({ updateStarredCount }) => {
       setLoading(false);
     }
   };
+  
 
   
   // if (loading) return <div>Loading...</div>;
@@ -199,192 +221,119 @@ const UserConversation = ({ updateStarredCount }) => {
 
   // Render the conversation as a simple chat between user and chatbot
   return (
-    <div className="container mt-5 justify-content-center text align-content-center">
-      {/* Back Button */}
-      <button
-        onClick={() => navigate(-1)}
-        className="btn btn-secondary mb-3"
-        style={{ position: "absolute", right: "100px", top: "90px" }}
-      >
-        Back
-      </button>
+    <div className="user-conversation-container">
+  {/* Back Button */}
+  <button onClick={() => navigate(-1)} className="btn btn-secondary back-button">
+    Back
+  </button>
 
-      {/* Ticket ID at the top */}
-      <div>
-        <h4 className="text-center mb-4" style={{ color: "blue" }}>
-          <FaClipboardList className="me-2" /> Details of Ticket ID: {userId}
-        </h4>
-        {/* User Details Table */}
+  {/* Ticket ID at the top */}
+  <h4 className="ticket-id-title">
+    <FaClipboardList className="me-2" /> Details of Ticket ID: {userId}
+  </h4>
 
-        <div className="table-responsive">
-          <table className="table table-bordered text-center">
-            <thead className="thead-dark">
-              <tr>
-                {/* <th><FaIdBadge /> ID</th> */}
-                <th>
-                  <FaUser className="me-1" /> Customer Name
-                </th>
-                <th>
-                  <FaEnvelope className="me-1" /> Email
-                </th>
-                <th>
-                  <FaPhone className="me-1" /> Contact
-                </th>
-                <th>
-                  <FaClock className="me-1" /> Conversation Duration
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="5">Loading...</td>
-                </tr>
-              ) : userDetails ? (
-                <tr>
-                  {console.log("Rendering user details:", userDetails)}
-                  {/* <td>{userDetails.user_id}</td> */}
-                  <td>{userDetails.user_name}</td>
-                  <td>{userDetails.email}</td>
-                  <td>{userDetails.contact}</td>
-                  <td>{userDetails.conversation_duration}</td>
-                </tr>
-              ) : (
-                <tr>
-                  {console.log("No user details available.")}
-                  <td colSpan="5">No data available.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+  {/* User Details Table */}
+  <div className="table-responsive">
+    <table className="user-table">
+      <thead>
+        <tr>
+          <th><FaUser className="me-1" /> Customer Name</th>
+          <th><FaEnvelope className="me-1" /> Email</th>
+          <th><FaPhone className="me-1" /> Contact</th>
+          <th><FaClock className="me-1" /> Conversation Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+        {loading ? (
+          <tr>
+            <td colSpan="5">Loading...</td>
+          </tr>
+        ) : userDetails ? (
+          <tr>
+            <td>{userDetails.user_name}</td>
+            <td>{userDetails.email}</td>
+            <td>{userDetails.contact}</td>
+            <td>{userDetails.conversation_duration}</td>
+          </tr>
+        ) : (
+          <tr>
+            <td colSpan="5">No data available.</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
 
-        {/* Main content container */}
-        <div>
-          <h4 className="text-left mb-6" style={{ color: "blue" }}>
-            <FaClipboardList className="me-2" /> User Conversation
-          </h4>
-        </div>
-        <div
-          className="chat-container"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "30px",
-          }}
-        >
-          {/* Left side: Chatbot */}
-          <div
-            className="chatbot-container"
-            style={{
-              flex: 1,
-              padding: "20px",
-              borderRight: "1px solid #ddd",
-            }}
-          >
-            <div
-              className="chat-box-container"
-              style={{
-                border: "1px solid #ddd",
-                padding: "10px",
-                borderRadius: "5px",
-                height: "400px",
-                overflowY: "auto",
-                backgroundColor: "#f9f9f9",
-              }}
-            >
-              {loading ? (
-                <Skeleton
-                  count={6}
-                  height={40}
-                  style={{ marginBottom: "10px" }}
-                />
-              ) : conversation ? (
-                conversation.split("\n").map((message, index) => {
-                  const isChatbotMessage = message.startsWith("Chatbot:");
-                  const messageStyle = {
-                    marginBottom: "10px",
-                    padding: "8px",
-                    borderRadius: "5px",
-                    backgroundColor: isChatbotMessage ? "#f1f1f1" : "#e0f7fa",
-                    textAlign: isChatbotMessage ? "left" : "right",
-                  };
+  {/* Chat & Form Section */}
+  <div className="chat-container">
+    {/* Chatbot Section */}
+    <div className="chatbot-container">
+      <div className="chat-box-container">
+        {loading ? (
+          <Skeleton count={6} height={40} />
+        ) : conversation ? (
+          conversation.split("\n").map((message, index) => {
+            const isChatbotMessage = message.startsWith("Chatbot:");
+            const messageClass = isChatbotMessage ? "chatbot-message" : "user-message";
+            
+            const cleanedMessage = message.replace(/^\[?Chatbot:?\s?/i, "").replace(/[\[\]'""]/g, "").trim();
 
-                  const cleanedMessage = message
-                  .replace(/^\[?Chatbot:?\s?/i, "") 
-                  .replace(/[\[\]'""]/g, "") 
-                  .trim();
-                  return (
-                    <div key={index} style={messageStyle}>
-                      <FaComment className="me-1" /> {cleanedMessage}
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center">
-                  <FaExclamationTriangle className="text-warning me-2" /> No
-                  conversation data available.
-                </div>
-              )}
-            </div>
+            return (
+              <div key={index} className={`chat-message ${messageClass}`}>
+                <FaComment className="me-1" /> {cleanedMessage}
+              </div>
+            );
+          })
+        ) : (
+          <div className="text-center">
+            <FaExclamationTriangle className="text-warning me-2" /> No conversation data available.
           </div>
-
-          {/* Right side: Form */}
-          <div className="form-container" style={{ flex: 1, padding: "20px" }}>
-            <form onSubmit={handleSubmit} className="mt-3">
-              <div className="form-group">
-                <label>
-                  <FaComment /> Remark
-                </label>
-                <textarea
-                  className="form-control"
-                  rows="3"
-                  value={agent_remarks}
-                  onChange={handleRemarkChange}
-                  placeholder="Enter your remark"
-                />
-              </div>
-              <div className="form-group mt-3">
-                <label>
-                  <FaClipboardList /> Status
-                </label>
-                <select
-                  className="form-control"
-                  value={status}
-                  onChange={handleStatusChange}
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="Opened">Opened</option>
-                  <option value="Closed">Closed</option>
-                </select>
-              </div>
-              <div className="form-group mt-3">
-                <label>
-                  <FaExclamationTriangle /> Mark as Important:
-                </label>
-                <span
-                  style={{
-                    cursor: "pointer",
-                    fontSize: "1.5rem",
-                    marginLeft: "10px",
-                  }}
-                  onClick={handleCheckboxChange}
-                >
-                  {rated ? (
-                    <FaCheckSquare className="text-success" />
-                  ) : (
-                    <FaRegSquare className="text-secondary" />
-                  )}
-                </span>
-              </div>
-              <button type="submit" className="btn btn-primary mt-3">
-                Submit
-              </button>
-            </form>
-          </div>
-        </div>
+        )}
       </div>
     </div>
+
+    {/* Form Section */}
+    <div className="form-container">
+      <form onSubmit={handleSubmit}>
+        {/* Remark Input */}
+        <div className="form-group">
+          <label><FaComment /> Remark</label>
+          <textarea
+            className="form-control"
+            rows="3"
+            value={agent_remarks}
+            onChange={handleRemarkChange}
+            placeholder="Enter your remark"
+          />
+        </div>
+
+        {/* Status Select */}
+        <div className="form-group">
+          <label><FaClipboardList /> Status</label>
+          <select className="form-control" value={status} onChange={handleStatusChange}>
+            <option value="Pending">Pending</option>
+            <option value="Opened">Opened</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+
+        {/* Mark as Important Checkbox */}
+        <div className="form-group">
+          <label><FaExclamationTriangle /> Mark as Important:</label>
+          <span className="important-toggle" onClick={handleCheckboxChange}>
+            {rated ? <FaCheckSquare className="text-success" /> : <FaRegSquare className="text-secondary" />}
+          </span>
+        </div>
+
+        {/* Submit Button */}
+        <button type="submit" className="btn btn-primary submit-button">
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
   );
 };
 

@@ -30,11 +30,6 @@ export const getUserConversation = (userId) => {
 };
 
 
-export const updateResolutionStatus = (ticketId, status) =>
-  fetchData("POST", `/tickets/update_resolution_status`, {
-    ticket_id: ticketId,
-    resolution_status: status,
-  });
 
 
 export const getAllTicketsInfo = () =>
@@ -131,6 +126,20 @@ export const getTicketUserInfo = async (ticketId) => {
   );
 };
 
+
+export const updateResolutionStatus = async (ticketId,newStatus) => {
+  if (!ticketId) {
+    console.error("Error: ticketId is missing!");
+    return Promise.reject("ticket ID is required");
+  }
+  
+    return fetchData("POST", `/tickets/update_resolution_status`, {
+      ticket_id: ticketId, 
+      resolution_status: newStatus,
+    });
+  };
+   
+
 export const saveTicketRemark = async (ticketId, agent_remarks) => {
   if (!ticketId) {
     console.error("Error: ticketId is missing!");
@@ -153,6 +162,6 @@ export const getTicketRemark = async (ticketId) => {
   //   `/tickets/get_remarks?ticket_id=${encodeURIComponent(ticketId)}`
   // );
   // return response.agent_remarks ?? "No remark available"; // Return a fallback message
-  return fetchData("GET",`/tickets/get_remarks?ticket_id=${encodeURIComponent(ticketId)}`
+  return fetchData("GET",`/tickets/get_remarks/${ticketId}`
   );
 };

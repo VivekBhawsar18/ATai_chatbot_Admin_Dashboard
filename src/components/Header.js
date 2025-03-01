@@ -14,11 +14,11 @@ export default function Header() {
         <i className="fas fa-search" style={styles.searchIcon}></i>
       </div>
       <div style={styles.profile}>
-        <img
+        {/* <img
           src="#"
-          alt="User"
+          alt=""
           style={styles.profileImage}
-        />
+        /> */}
        {/* <div style={styles.iconWrapper}>
   {/* <i className="fas fa-chevron-down" style={styles.icon}></i>
 </div>  */}
