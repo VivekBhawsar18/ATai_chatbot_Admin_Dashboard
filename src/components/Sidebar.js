@@ -5,7 +5,7 @@ export default function Sidebar() {
   const links = [
     
     { name: "Tickets", url: "/Tickets", icon: "fas fa-ticket-alt" }, 
-    { name: "Callback Request", url: "/Callbackrequest", icon: "fas fa-phone-alt" }, 
+    { name: "Callback Request", url: "/Callbackrequest", icon: "fa-solid fa-phone" }, 
     { name: "Upload CSV Or FAQ  ", url: "/UploadCSV", icon: "fa-solid fa-upload" },
     { name: "Help and Support", url: "/help", icon: "fas fa-question-circle" }, 
   ];
@@ -102,7 +102,7 @@ const styles = {
     color: "white",
     fontWeight: "500",
     fontSize: "16px",
-    display: "block",
+    // display: "block",
     padding: "12px 20px",
     borderRadius: "8px",
     transition: "all 0.3s ease",

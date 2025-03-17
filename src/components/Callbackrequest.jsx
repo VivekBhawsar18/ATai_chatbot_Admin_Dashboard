@@ -16,8 +16,10 @@ export default function Callbackrequest() {
       setLoading(true);
       try {
         const callbackRequests = await getCallbackRequests();
+        console.log("API Response:", callbackRequests);
         setTickets(callbackRequests);
       } catch (err) {
+        console.error("API Error:", err); 
         setError("Failed to load callback requests.");
       } finally {
         setLoading(false);
@@ -30,7 +32,12 @@ export default function Callbackrequest() {
   // if (loading) return <div>Loading...</div>;
   // if (error) return <div>Error: {error}</div>;
 
-  const filteredTickets = tickets.filter((ticket) => ticket.status === statusFilter);
+  // const filteredTickets = tickets.filter((ticket) => ticket.status?.toLowerCase() === statusFilter.toLowerCase());
+  const filteredTickets = tickets.map(ticket => ({
+    ...ticket,
+    status: ticket.status || "Pending" // Default status
+  }));
+  
 
   return (
     <div className="full-page-container">

@@ -9,8 +9,6 @@ import TotalTicket from "../components/TotalTicket";
 import OpenedTicket from "../components/OpenedTicket";
 import ClosedTicket from "../components/ClosedTicket";
 import RatedTicket from "../components/RatedTicket";
-import AnsweredTicket from "../components/AnsweredTicket";
-import UnAnsweredTicket from "../components/UnAnsweredTicket";
 import UserConversation from "../components/UserConversation";
 import Callbackrequest from "../components/Callbackrequest";
 import FAQdashboard from "../components/FAQdashboard";
@@ -32,9 +30,7 @@ export default function Router() {
           <Route path="/tickets" element={<Tickets />} />
           <Route path="/TotalTicket" element={<TotalTicket/>}/>
           <Route path="/OpenedTicket" element={<OpenedTicket/>}/>
-          <Route path="/AnsweredTicket" element={<AnsweredTicket/>}/>
-          <Route path="/UnansweredTicket" element={<UnAnsweredTicket/>}/>
-          <Route path="/ClosedTicket" element={<ClosedTicket/>}/>
+         <Route path="/ClosedTicket" element={<ClosedTicket/>}/>
           <Route path="/RatedTicket" element={<RatedTicket/>}/>
           <Route path="/Callbackrequest" element={<Callbackrequest/>}/>
           <Route path="/user_conversation" element={<UserConversation/>} />
