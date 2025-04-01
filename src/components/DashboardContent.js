@@ -206,9 +206,9 @@ import React from 'react';
 export default function DashboardContent() {
   return (
     <div>
-      <video width="100%" controls>
+      {/* <video width="100%" controls>
         <source src="/styles/ATai ChatBot.png" type="ATai" />
-        </video>
+        </video> */}
        
     </div>
   );

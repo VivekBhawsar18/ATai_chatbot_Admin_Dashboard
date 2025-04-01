@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./LoginPage.css"; // Import the external CSS for styling
+import "./LoginPage.css"; // Import external CSS for styling
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const navigate = useNavigate(); // useNavigate hook for navigation
-
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
 
-    // Simple validation for username and password (you can expand this)
-    if (username === "admin" && password === "admin123456") {
-      // Redirect to the dashboard page after successful login
+    if (username === "agent" && password === "123456") {
+      console.log("Login successful. Redirecting...");
+      
+      // ✅ Redirect to dashboard
       navigate("/dashboardlayout");
     } else {
-      setError("Invalid credentials. Please try again.");
+      setError("Invalid username or password.");
     }
   };
 
@@ -49,9 +49,6 @@ export default function LoginPage() {
             Login
           </button>
         </form>
-        {/* <div className="footer">
-          <p>Don't have an account? <a href="#">Sign up</a></p> */}
-        {/* </div> */}
       </div>
     </div>
   );

@@ -3,11 +3,11 @@ import { Link, useLocation } from "react-router-dom";
 
 export default function Sidebar() {
   const links = [
-    
-    { name: "Tickets", url: "/Tickets", icon: "fas fa-ticket-alt" }, 
-    { name: "Callback Request", url: "/Callbackrequest", icon: "fa-solid fa-phone" }, 
-    { name: "Upload CSV Or FAQ  ", url: "/UploadCSV", icon: "fa-solid fa-upload" },
-    { name: "Help and Support", url: "/help", icon: "fas fa-question-circle" }, 
+    { name: "Dashboard", url: "/dashboardlayout/Dashboard", icon: "fa fa-dashboard" }, 
+    { name: "Tickets", url: "/dashboardlayout/Tickets", icon: "fas fa-ticket-alt" }, 
+    { name: "Callback Request", url: "/dashboardlayout/Callbackrequest", icon: "fa-solid fa-phone" }, 
+    { name: "Self Assessment Report  ", url: "/dashboardlayout/SelfAssessmentReport", icon: "fa-solid fa-file" },
+    { name: "Help and Support", url: "/dashboardlayout/help", icon: "fas fa-question-circle" }, 
   ];
 
   // Get the current location from useLocation hook

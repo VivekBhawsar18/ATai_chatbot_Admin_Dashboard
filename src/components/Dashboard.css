@@ -1,0 +1,79 @@
+/* Full-page container */
+.dashboard-container {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Title styling */
+  .ticket-summary-title {
+    text-align: center;
+    margin: 1rem 0;
+  }
+  
+  /* Row container for cards and bar graph */
+  .dashboard-row {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  /* Column style for each part */
+  .dashboard-col {
+    flex: 1;            /* Each column takes equal space */
+    min-width: 300px;   /* Optional: ensure a minimum width */
+    padding: 0 15px;
+  }
+  
+  /* Count cards row */
+  .count-cards-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    width: 100%;
+  }
+  
+  /* Each card item */
+  .card-item {
+    flex: 1 1 45%;      /* Adjust the flex basis as needed */
+    margin: 10px;
+    text-align: center;
+  }
+  
+  /* Link styling for cards */
+  .card-link {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  /* Dashboard card styling */
+  .dashboard-card {
+    padding: 1rem;
+    border-radius: 8px;
+    color: #fff;
+  }
+  
+  /* Bar Chart wrapper */
+  .bar-chart-wrapper {
+    margin-top: 1rem;
+  }
+  
+  /* Chart title */
+  .chart-title {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  /* Responsive table container */
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  /* Additional container adjustments (if needed) */
+  .container-fluid {
+    width: 100%;
+    padding: 0 15px;
+    margin: 0 auto;
+  }

@@ -1,11 +1,11 @@
 import axios from "axios";
 
 
-const BASE_URL = "https://chatbot-api-b1jc.onrender.com";
+const BASE_URL = "https://dev-atai-api.raghavsolars.com/public/api";
 
 const fetchData = async (method, url, data = {}) => {
   try {
-    const response = await axios({ method, url: `${BASE_URL}${url}`, data });
+    const response = await axios({ method, url: `${BASE_URL}${url}`, data , headers: { "Content-Type": "application/json" },});
     return response.data;
   } catch (error) {
     console.error("Error:", error);
@@ -93,21 +93,11 @@ export const getUnresolvedTicketCount = () =>
 export const getResolvedTicketCount = () =>
   fetchData("GET", "/tickets/resolved_ticket_count");
 
-export const createTicket = async (ticketData) => {
-  try {
-    const response = await fetch(`${BASE_URL}/tickets/create_ticket`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(ticketData),
-    });
 
-    if (!response.ok) throw new Error("Failed to create ticket");
-    return response.json(); // Return the response data
-  } catch (error) {
-    console.error("Error creating ticket:", error);
-    throw error;
-  }
-};
+
+export const createTicket = (ticketData) =>
+  fetchData("POST", "/tickets/create_ticket", ticketData);
+
 
 export const getConversationDuration = (userId) =>
   fetchData(
@@ -133,21 +123,22 @@ export const updateResolutionStatus = async (ticketId,newStatus) => {
     return Promise.reject("ticket ID is required");
   }
   
-    return fetchData("POST", `/tickets/update_resolution_status`, {
-      ticket_id: ticketId, 
+    return fetchData("POST", `/tickets/ticket_resolution_status`, {
+      ticket_id: encodeURIComponent(ticketId), 
       resolution_status: newStatus,
     });
   };
    
 
-export const saveTicketRemark = async (ticketId, agent_remarks) => {
+export const saveTicketRemark = async (ticketId, agent_remarks,followUpDate) => {
   if (!ticketId) {
     console.error("Error: ticketId is missing!");
     return Promise.reject("ticket ID is required");
   }
-  return fetchData("POST", `/tickets/save_remark`, {
+  return fetchData("POST", `/tickets/save_remark_and_followup`, {
     ticket_id: encodeURIComponent(ticketId),
-    remark: agent_remarks,
+    remark:agent_remarks,
+    follow_up_date:followUpDate,
   });
 };
 
@@ -157,11 +148,61 @@ export const getTicketRemark = async (ticketId) => {
     return Promise.reject("ticket ID is required");
   }
 
-  // const response = await fetchData(
-  //   "GET",
-  //   `/tickets/get_remarks?ticket_id=${encodeURIComponent(ticketId)}`
-  // );
-  // return response.agent_remarks ?? "No remark available"; // Return a fallback message
+
   return fetchData("GET",`/tickets/get_remarks/${ticketId}`
   );
 };
+
+
+
+export const getFollowUpTickets = async () => {
+  const response = await fetchData("GET", "/tickets/follow_up_tickets");
+
+  console.log("API Response for Follow-Up Tickets:", response);
+
+  // Check if response contains the expected array
+  return Array.isArray(response.tickets) ? response.tickets : [];
+};
+
+// export const getTicketStatusOptions = async () => {
+//   try {
+//     const response = await fetch("/status/get_descriptions", { method: "GET" });
+//     const data = await response.json();
+
+//     console.log("Fetched Status Options:", data);
+
+//     // Extract only the status descriptions
+//     return data.statuses.map((status) => status.description) || [];
+//   } catch (error) {
+//     console.error("Error fetching ticket status options:", error);
+//     return [];
+//   }
+// };
+
+export async function getTicketStatusOptions() {
+  const url = `${BASE_URL}/status/get_descriptions`;
+  const headers = { Accept: "application/json" };
+
+  try {
+    const response = await fetch(url, { method: "GET", headers });
+    console.log(`GetStatusDescriptions - Status Code: ${response.status}`);
+
+    // Read the response body as text, log it for debugging, then parse it.
+    const responseBody = await response.text();
+    console.log(`GetStatusDescriptions - Response Body: ${responseBody}`);
+
+    if (response.ok) {
+      const data = JSON.parse(responseBody);
+      // Extract and return only the descriptions
+      return data.statuses.map((s) => s.description);
+    } else {
+      throw new Error(
+        `Failed to fetch status descriptions: ${response.status} - ${responseBody}`
+      );
+    }
+  } catch (error) {
+    console.error("Error in getStatusDescriptions:", error);
+    throw error;
+  }
+}
+

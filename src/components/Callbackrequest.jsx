@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getCallbackRequests } from "../services/Services"; // Import only the necessary API
-import { FaUser, FaPhone, FaEnvelope, FaQuestionCircle, FaCheckCircle, FaClock } from "react-icons/fa";
+import {
+  FaUser,
+  FaPhone,
+  FaEnvelope,
+  FaQuestionCircle,
+  FaCheckCircle,
+  FaClock,
+} from "react-icons/fa";
+
 import "./Callbackrequest.css";
+import { useOutletContext } from "react-router-dom";
 
 export default function Callbackrequest() {
   const [tickets, setTickets] = useState([]);
@@ -10,6 +19,7 @@ export default function Callbackrequest() {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const [statusFilter, setStatusFilter] = useState("Pending");
+  const [filterStatus, setFilterStatus] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,7 +29,7 @@ export default function Callbackrequest() {
         console.log("API Response:", callbackRequests);
         setTickets(callbackRequests);
       } catch (err) {
-        console.error("API Error:", err); 
+        console.error("API Error:", err);
         setError("Failed to load callback requests.");
       } finally {
         setLoading(false);
@@ -28,16 +38,40 @@ export default function Callbackrequest() {
 
     fetchData();
   }, []);
+  const { searchQuery } = useOutletContext();
+  const filteredTickets = tickets
+    .map((ticket) => ({
+      ...ticket,
+      status: ticket.status || "Pending", // Default status if missing
+    }))
+    .filter(
+      (ticket) =>
+        (ticket.ticket_title || "")
+          .toLowerCase()
+          .includes((searchQuery || "").toLowerCase()) ||
+        (ticket.ticket_id
+          ? ticket.ticket_id.toString().includes(searchQuery)
+          : false) ||
+        (ticket.user_name || "")
+          .toLowerCase()
+          .includes((searchQuery || "").toLowerCase()) ||
+        (ticket.contact
+          ? ticket.contact.toString().includes(searchQuery)
+          : false) ||
+        (ticket.email || "")
+          .toLowerCase()
+          .includes((searchQuery || "").toLowerCase())
+    )
+    .sort((a, b) => new Date(b.updated) - new Date(a.updated));
 
   // if (loading) return <div>Loading...</div>;
   // if (error) return <div>Error: {error}</div>;
 
   // const filteredTickets = tickets.filter((ticket) => ticket.status?.toLowerCase() === statusFilter.toLowerCase());
-  const filteredTickets = tickets.map(ticket => ({
-    ...ticket,
-    status: ticket.status || "Pending" // Default status
-  }));
-  
+  // const filteredTickets = tickets.map((ticket) => ({
+  //   ...ticket,
+  //   status: ticket.status || "Pending", // Default status
+  // }));
 
   return (
     <div className="full-page-container">
@@ -50,13 +84,19 @@ export default function Callbackrequest() {
           {/* Buttons for filtering */}
           <div className="mb-3">
             <button
-              className={`btn ${statusFilter === "Pending" ? "btn-primary" : "btn-secondary"} mr-2`}
+              className={`btn ${
+                statusFilter === "Pending" ? "btn-primary" : "btn-secondary"
+              } mr-2`}
               onClick={() => setStatusFilter("Pending")}
             >
               <FaClock /> Pending
             </button>
             <button
-              className={`btn ${statusFilter === "Callback done" ? "btn-primary" : "btn-secondary"}`}
+              className={`btn ${
+                statusFilter === "Callback done"
+                  ? "btn-primary"
+                  : "btn-secondary"
+              }`}
               onClick={() => setStatusFilter("Callback done")}
             >
               <FaCheckCircle /> Callback Done
@@ -68,14 +108,24 @@ export default function Callbackrequest() {
             <table className="table table-bordered table-striped w-100">
               <thead className="bg-light">
                 <tr>
-                <th><i className="fas fa-hashtag"></i> ID</th>
-                  <th><FaUser /> User Name</th>
-                  <th><FaPhone /> Contact</th>
-                  <th><FaEnvelope /> Email</th>
-                  <th><FaQuestionCircle /> User Query</th>
                   <th>
-                        <i className="fas fa-info-circle"></i> Status
-                      </th>
+                    <i className="fas fa-hashtag"></i> ID
+                  </th>
+                  <th>
+                    <FaUser /> User Name
+                  </th>
+                  <th>
+                    <FaPhone /> Contact
+                  </th>
+                  <th>
+                    <FaEnvelope /> Email
+                  </th>
+                  <th>
+                    <FaQuestionCircle /> User Query
+                  </th>
+                  <th>
+                    <i className="fas fa-info-circle"></i> Status
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -83,7 +133,9 @@ export default function Callbackrequest() {
                   filteredTickets.map((ticket) => (
                     <tr key={ticket.ticket_id}>
                       <td>
-                        <Link to={`/user_conversation?user_id=${encodeURIComponent(ticket.ticket_id)}`}>
+                        <Link
+                          to={`/dashboardlayout/user_conversation?user_id=${ticket.ticket_id}`}
+                        >
                           {ticket.ticket_id}
                         </Link>
                       </td>
@@ -93,9 +145,18 @@ export default function Callbackrequest() {
                       <td>{ticket.userquery || "No query"}</td>
                       <td>
                         <span
-                          className={`badge bg-${ticket.status === "Callback done" ? "success" : "warning"}`}
+                          className={`badge bg-${
+                            ticket.status === "Callback done"
+                              ? "success"
+                              : "warning"
+                          }`}
                         >
-                          {ticket.status === "Callback done" ? <FaCheckCircle /> : <FaClock />} {ticket.status}
+                          {ticket.status === "Callback done" ? (
+                            <FaCheckCircle />
+                          ) : (
+                            <FaClock />
+                          )}{" "}
+                          {ticket.status}
                         </span>
                       </td>
                     </tr>
