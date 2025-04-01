@@ -49,19 +49,19 @@ export default function Tickets() {
   const links = [
     {
       name: "Total",
-      url: "/TotalTicket",
+      url: "/dashboardlayout/TotalTicket",
       icon: faBriefcase,
       bgColor: "bg-primary",
     },
     {
       name: "Opened",
-      url: "/OpenedTicket",
+      url: "/dashboardlayout/OpenedTicket",
       icon: faEnvelope,
       bgColor: "bg-success",
     },
     {
       name: "Closed",
-      url: "/ClosedTicket",
+      url: "/dashboardlayout/ClosedTicket",
       icon: faCheckCircle,
       bgColor: "bg-danger",
     },
@@ -73,7 +73,7 @@ export default function Tickets() {
     // },
     {
       name: "Inprogress",
-      url: "/InprogressTicket",
+      url: "/dashboardlayout/InprogressTicket",
       icon: faSpinner,
       bgColor: "bg-warning",
     },
@@ -84,6 +84,7 @@ export default function Tickets() {
     ticket_count: 0,
     Opened: 0,
     Closed: 0,
+    Inprogress:0,
     Rated: 0,
   });
   const navigate = useNavigate();

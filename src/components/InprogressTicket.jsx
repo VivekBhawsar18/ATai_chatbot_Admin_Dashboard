@@ -14,10 +14,10 @@ const OpenedTicket = () => {
       try {
         const fetchedTickets = await getAllTicketsInfo();
         // Filter tickets to only show opened ones
-        const openedTickets = fetchedTickets.filter(
-          (ticket) => ticket.status === "Open"
+        const inprogressTicket = fetchedTickets.filter(
+          (ticket) => ticket.status === "In Progress, communication is going on with client."
         );
-        setTickets(openedTickets);
+        setTickets(inprogressTicket);
       } catch (err) {
         setError("Error fetching tickets");
       } finally {
@@ -32,7 +32,7 @@ const OpenedTicket = () => {
     <div className="container mt-5">
       {/* Heading */}
       <div className="text-center mb-4">
-        <h4 style={{ color: "blue" }}>Opened Tickets</h4>
+        <h4 style={{ color: "blue" }}>Inprogress Tickets</h4>
          {/* Scrollable Table */}
       <div style={{ maxHeight: "400px", overflowY: "auto", border: "1px solid #ddd" }}>
         <table className="table table-bordered table-striped">

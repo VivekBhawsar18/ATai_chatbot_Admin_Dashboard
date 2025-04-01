@@ -61,6 +61,7 @@ import TotalTicket from "../components/TotalTicket";
 import OpenedTicket from "../components/OpenedTicket";
 import ClosedTicket from "../components/ClosedTicket";
 import RatedTicket from "../components/RatedTicket";
+import InprogressTicket from "../components/InprogressTicket";
 import UserConversation from "../components/UserConversation";
 import Callbackrequest from "../components/Callbackrequest";
 import FAQdashboard from "../components/FAQdashboard";
@@ -68,6 +69,7 @@ import Help from "../components/Help";
 import SelfAssessmentReport from "../components/SelfAssessmentReport";
 import LoginPage from "../components/LoginPage";
 import Dashboard from "../components/Dashboard";
+
 
 export default function Router() {
   return (
@@ -89,11 +91,13 @@ export default function Router() {
           <Route path="OpenedTicket" element={<OpenedTicket />} />
           <Route path="ClosedTicket" element={<ClosedTicket />} />
           <Route path="RatedTicket" element={<RatedTicket />} />
+          <Route path="InprogressTicket" element={<InprogressTicket />} />
           <Route path="Callbackrequest" element={<Callbackrequest />} />
           <Route path="user_conversation" element={<UserConversation />} />
           <Route path="Help" element={<Help />} />
           <Route path="SelfAssessmentReport" element={<SelfAssessmentReport />} />
           <Route path="Dashboard" element={<Dashboard />} />
+          
         </Route>
       </Routes>
     </BrowserRouter>
