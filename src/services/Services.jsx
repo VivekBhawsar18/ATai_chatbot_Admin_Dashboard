@@ -32,13 +32,13 @@ export const getUserConversation = (userId) => {
 
 
 
-// export const getAllTicketsInfo = () =>
-//   fetchData("GET", "/tickets/get_all_tickets_info");
+export const getAllTicketsInfo = () =>
+  fetchData("GET", "/tickets/get_all_tickets_info");
 
 // ✅ Fetch all tickets
-export const getAllTicketsInfo = async (page = 1) => {
-  return await fetchData("GET", `/tickets/get_all_tickets_info?page=${page}`);
-};
+// export const getAllTicketsInfo = async (page = 1) => {
+//   return await fetchData("GET", `/tickets/get_all_tickets_info?page=${page}`);
+// };
 
 
 
