@@ -32,8 +32,14 @@ export const getUserConversation = (userId) => {
 
 
 
-export const getAllTicketsInfo = () =>
-  fetchData("GET", "/tickets/get_all_tickets_info");
+// export const getAllTicketsInfo = () =>
+//   fetchData("GET", "/tickets/get_all_tickets_info");
+
+// ✅ Fetch all tickets
+export const getAllTicketsInfo = async (page = 1) => {
+  return await fetchData("GET", `/tickets/get_all_tickets_info?page=${page}`);
+};
+
 
 
 export const getTicketCount = () =>
@@ -205,4 +211,40 @@ export async function getTicketStatusOptions() {
     throw error;
   }
 }
+
+// ✅ Verify user credentials (Uses email as username)
+export const verifyUserCredentials = async (credentials) => {
+  if (!credentials.email || !credentials.password) {
+    throw new Error("Email and password are required!");
+  }
+
+  console.log("Sending Login Request with:", credentials.email);
+
+  return fetchData("POST", "/verify-user-credentials", {
+    email: credentials.email,
+    password: credentials.password,
+  });
+};
+
+// ✅ Fetch user credentials (Ensures proper validation)
+export const getUserCredentials = async (user_id) => {
+  if (!user_id) throw new Error("User ID is required");
+
+  try {
+    console.log(`Fetching user credentials for ID: ${user_id}`);
+    const response = await fetchData(
+      "GET",
+      `/get-user-credentials/${encodeURIComponent(user_id)}`
+    );
+
+    if (response.status !== "success" || !response.data) {
+      throw new Error("User not found!");
+    }
+    return response;
+  } catch (error) {
+    console.error("Error fetching user credentials:", error);
+    throw new Error(error.message || "Failed to fetch user credentials");
+  }
+};
+
 

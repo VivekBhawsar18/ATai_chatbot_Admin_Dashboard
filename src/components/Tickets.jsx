@@ -7,10 +7,9 @@ import { useOutletContext } from "react-router-dom";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
  
-  FaStar,
   FaArrowLeft,
   FaArrowRight,
-  FaSearch,
+ 
 } from "react-icons/fa";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -25,16 +24,8 @@ import {
   faEnvelope,
   faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+
+
 import {
   getAllTicketsInfo,
   getTicketCount,
@@ -46,38 +37,7 @@ import {
 } from "../services/Services";
 
 export default function Tickets() {
-  const links = [
-    {
-      name: "Total",
-      url: "/dashboardlayout/TotalTicket",
-      icon: faBriefcase,
-      bgColor: "bg-primary",
-    },
-    {
-      name: "Opened",
-      url: "/dashboardlayout/OpenedTicket",
-      icon: faEnvelope,
-      bgColor: "bg-success",
-    },
-    {
-      name: "Closed",
-      url: "/dashboardlayout/ClosedTicket",
-      icon: faCheckCircle,
-      bgColor: "bg-danger",
-    },
-    // {
-    //   name: "Rated",
-    //   url: "/RatedTicket",
-    //   icon: FaStar,
-    //   bgColor: "bg-info",
-    // },
-    {
-      name: "Inprogress",
-      url: "/dashboardlayout/InprogressTicket",
-      icon: faSpinner,
-      bgColor: "bg-warning",
-    },
-  ];
+ 
   const { searchQuery } = useOutletContext();
 
   const [ticketData, setTicketData] = useState({
@@ -93,9 +53,10 @@ export default function Tickets() {
   const ticketId = queryParams.get("ticket_id");
 
   const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [updatedTickets, setUpdatedTickets] = useState([]);
+  const [ticketCount, setTicketCount] = useState(0);
 
   const [starredCount, setStarredCount] = useState(0);
   const [ticketRemarks, setTicketRemarks] = useState([]);
@@ -103,44 +64,59 @@ export default function Tickets() {
   const [filterStatus, setFilterStatus] = useState("All");
   const [FollowUp, setFollowUp] = useState([]);
   const [followUpDate, setFollowUpDate] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
 
   // const [searchQuery, setSearchQuery] = useState("");
 
   // Pagination
-  const [currentPage, setCurrentPage] = useState(0);
-  const ticketsPerPage = 5; // Only 5 tickets per page
+  const [page, setPage] = useState(1);
+   const ticketsPerPage = 5; // Only 5 tickets per page
 
-  const fetchData = async () => {
+  const fetchData = async (page) => {
     setLoading(true);
-
+  
     try {
       console.log("Fetching ticket data...");
+      
+      // Fetch ticket count separately
+      const ticketCountResponse = await getTicketCount();
+      const totalTicketCount = ticketCountResponse?.ticket_count || 0;
+    
+     
+ 
 
-      const ticketsArray = await getAllTicketsInfo();
-      console.log("Fetched Tickets Array:", ticketsArray);
-      setTickets(ticketsArray);
-
+      const response = await getAllTicketsInfo(page);
+  
+      if (response && response.data) {
+        setTickets(prevTickets => [...prevTickets, ...response.data]);
+        setTotalPages(response.total_pages || 1);
+      } else {
+        setTickets([]);
+        setTotalPages(1);
+      }
+  
+      const ticketArray = response.data || [];
       const followUpTickets = await getFollowUpTickets();
       console.log("Fetched Follow-Up Tickets:", followUpTickets);
 
-      const totalTicketCount = ticketsArray.length;
-      const openedTicketCount = ticketsArray.filter(
+      
+      const openedTicketCount = ticketArray.filter(
         (ticket) => ticket.status === "Open"
       ).length;
       
       // Separate counts for each closed condition
-      const resolvedClosedCount = ticketsArray.filter(
+      const resolvedClosedCount = ticketArray.filter(
         (ticket) => ticket.status === "Resolved and Closed"
       ).length;
       
-      const noResponseClosedCount = ticketsArray.filter(
+      const noResponseClosedCount = ticketArray.filter(
         (ticket) => ticket.status === "No Response from Client so Closed"
       ).length;
       
       // Total closed tickets count (sum of both conditions)
       const closedTicketCount = resolvedClosedCount + noResponseClosedCount;
       
-      const inprogressTicketCount = ticketsArray.filter(
+      const inprogressTicketCount = ticketArray.filter(
         (ticket) => ticket.status === "In Progress, communication is going on with client."
       ).length;
 
@@ -160,34 +136,12 @@ export default function Tickets() {
         Rated: 0,
       });
       
-      const updatedTickets = ticketsArray.map((ticket) => {
-        const followUp = followUpTickets.find(
-          (f) => f.ticket_id === ticket.ticket_id
-        );
-        return {
-          ...ticket,
-          follow_up_date: followUp ? followUp.follow_up_date : "No Follow-Up",
-          
-        };
+      setTicketData({
+        ticket_count: ticketCountResponse?.ticket_count || 0,
+        Opened: ticketCountResponse?.Opened || 0,
+        Closed: ticketCountResponse?.Closed || 0,
+        Inprogress: ticketCountResponse?.Inprogress || 0,
       });
-
-      setTickets(updatedTickets);
-
-      // Fetch the starred ticket count
-
-      const ratedTicketResponse = await getStarredTicketCount();
-      console.log("Rated Ticket Response:", ratedTicketResponse);
-      setTicketData((prevState) => ({
-        ...prevState,
-        Rated: ratedTicketResponse.starred_ticket_count || 0,
-      }));
-
-      const ticketCountResponse = await getTicketCount();
-      console.log("Ticket Count Response:", ticketCountResponse);
-      setTicketData((prevState) => ({
-        ...prevState,
-        ticket_count: ticketCountResponse.ticket_count || 0,
-      }));
     } catch (error) {
       console.error("Error fetching ticket data:", error);
       setError(error.message || "An error occurred while fetching data.");
@@ -195,27 +149,11 @@ export default function Tickets() {
       setLoading(false);
     }
   };
-
-  // const updatedStatus = localStorage.getItem("updatedStatus");
-  // if (updatedStatus) {
-  //   const { userId, newStatus } = JSON.parse(updatedStatus);
-
-  //   // ✅ Update the status in the tickets table
-  //   setTickets((prevTickets) =>
-  //     prevTickets.map((ticket) =>
-  //       ticket.ticket_id === userId
-  //         ? { ...ticket, resolution_status: newStatus }
-  //         : ticket
-  //     )
-  //   );
-
-  // ✅ Clear stored status after updating
-  //   localStorage.removeItem("updatedStatus");
-  //  }
-
+  
+  
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(page);
+  }, [page]);
 
   useEffect(() => {
     const updatedStatus = localStorage.getItem("updatedStatus");
@@ -233,6 +171,30 @@ export default function Tickets() {
         localStorage.removeItem("updatedStatus"); // Clear stored status
     }
   }, []); // ✅ Ensure this runs when tickets change
+
+  useEffect(() => {
+    const fetchTotalTicketCount = async () => {
+      try {
+        console.log("Fetching total ticket count...");
+        const response = await getTicketCount(); 
+        console.log("Total Ticket Count:", response);
+  
+        setTicketData((prevData) => ({
+          ...prevData,
+          ticket_count: response.count || 0, // Ensure default value if undefined
+        }));
+      } catch (error) {
+        console.error("Error fetching total ticket count:", error);
+      }
+    };
+  
+    fetchTotalTicketCount();
+  }, []);
+
+
+
+
+  
 
   // Get the new remark from input field
   const handleSaveRemark = async (ticketId) => {
@@ -285,21 +247,6 @@ export default function Tickets() {
     else return "status-badge-secondary";
   };
   
-
-  // const filteredTickets = tickets
-  //   .filter(
-  //     (ticket) =>
-  //       (filterStatus === "All" || ticket.statuses === filterStatus) &&
-  //       ((ticket.ticket_title || "")
-  //         .toLowerCase()
-  //         .includes((searchQuery || "").toLowerCase()) ||
-  //         (ticket.ticket_id
-  //           ? ticket.ticket_id.toString().includes(searchQuery)
-  //           : false))
-  //   )
-  //   .sort((a, b) => new Date(b.updated) - new Date(a.updated));
-
-
   const filteredTickets = tickets
   .filter((ticket) => {
     const status = (ticket.status || "").toLowerCase(); // Ensure status is always a lowercase string
@@ -313,30 +260,49 @@ export default function Tickets() {
 
     return false;
   })
-  .filter((ticket) => 
-    (ticket.ticket_title || "").toLowerCase().includes((searchQuery || "").toLowerCase()) ||
-    (ticket.ticket_id ? ticket.ticket_id.toString().includes(searchQuery) : false)
-  )
-  .sort((a, b) => new Date(b.updated) - new Date(a.updated)); // Sort by most recent update
+  // .filter((ticket) => 
+  //   (ticket.ticket_title || "").toLowerCase().includes((searchQuery || "").toLowerCase()) ||
+  //   (ticket.ticket_id ? ticket.ticket_id.toString().includes(searchQuery) : false)
+  // )
+  // .sort((a, b) => new Date(b.updated) - new Date(a.updated)); // Sort by most recent update
+
+  .filter((ticket) => {
+    const query = (searchQuery ?? "").toLowerCase();
+    const titleMatch = (ticket.ticket_title ?? "").toLowerCase().includes(query);
+    const idMatch = ticket.ticket_id ? ticket.ticket_id.toString().includes(query) : false;
+    return titleMatch || idMatch;
+  })
+  .sort((a, b) => {
+    const dateA = new Date(a.updated);
+    const dateB = new Date(b.updated);
+    return dateB - dateA; // Sort by most recent update
+  });
 
 
-  // Calculate total pages
-  const totalPages = Math.ceil(filteredTickets.length / ticketsPerPage);
-  const startIndex = currentPage * ticketsPerPage;
-  const currentTickets = filteredTickets.slice(
-    startIndex,
+  // // Calculate total pages
+  const calculatedTotalPages = Math.ceil((filteredTickets?.length || 0) / ticketsPerPage);
+  const startIndex = (page - 1) * ticketsPerPage; // Ensure correct starting index
+  const currentTickets = filteredTickets?.slice(
+    Math.max(0, startIndex), 
     startIndex + ticketsPerPage
-  );
+  ) || [];
+  
 
   // Handle next & previous page navigation
   const handleNextPage = () => {
-    if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
+    if (page < totalPages) {
+      setPage((prevPage) => prevPage + 1);
+      fetchData(page + 1); // ✅ Fetch new page data
+    }
   };
-
+  
   const handlePrevPage = () => {
-    if (currentPage > 0) setCurrentPage(currentPage - 1);
+    if (page > 1) {
+      setPage((prevPage) => prevPage - 1);
+      fetchData(page - 1); // ✅ Fetch previous page data
+    }
   };
-
+  
   // Bar Chart Data
   const barChartData = [
     { name: "Total", Total: ticketData.ticket_count },
@@ -344,17 +310,53 @@ export default function Tickets() {
     { name: "Closed", Closed: ticketData.Closed },
     { name: "Inprogress", Inprogress: ticketData.Inprogress },
   ];
+  const links = [
+    {
+      name: "Total",
+      url: "/dashboardlayout/TotalTicket",
+      icon: faBriefcase,
+      bgColor: "bg-primary",
+      count: ticketData.ticket_count,
+    },
+    {
+      name: "Opened",
+      url: "/dashboardlayout/OpenedTicket",
+      icon: faEnvelope,
+      bgColor: "bg-success",
+      count: ticketData.Opened,
+    },
+    {
+      name: "Closed",
+      url: "/dashboardlayout/ClosedTicket",
+      icon: faCheckCircle,
+      bgColor: "bg-danger",
+      count: ticketData.Closed,
+    },
+    // {
+    //   name: "Rated",
+    //   url: "/RatedTicket",
+    //   icon: FaStar,
+    //   bgColor: "bg-info",
+    // },
+    {
+      name: "Inprogress",
+      url: "/dashboardlayout/InprogressTicket",
+      icon: faSpinner,
+      bgColor: "bg-warning",
+      count: ticketData.Inprogress,
+    },
+  ];
 
   return (
     <div className="tickets-container">
-      {/* <Header onSearch={setSearchQuery} /> */}
+    
       {/* Page Title */}
       <h4 className="ticket-summary-title">Tickets Summary</h4>
 
       <div className="container ticket-summary-section">
         <div className="row g-4 d-flex align-items-stretch">
           {/* Ticket Summary Cards */}
-          <div className="col-12 col-md-6">
+          {/* <div className="col-12 col-md-6">
             <div className="row g-4">
               {loading
                 ? [...Array(4)].map((_, index) => (
@@ -382,10 +384,42 @@ export default function Tickets() {
                     );
                   })}
             </div>
+          </div> */}
+          
+          <div className="col-12">
+          <div className="row g-4">
+  {loading
+    ? [...Array(4)].map((_, index) => (
+        <div key={index} className="col-12 col-md-3 text-center">
+          <Skeleton height={120} width="100%" />
+        </div>
+      ))
+    : links.map((link) => {
+        const ticketCount =
+          link.name === "Total"
+            ? ticketData.ticket_count
+            : ticketData[link.name] || 0;
+
+        return (
+          <div key={link.name} className="col-12 col-md-3 text-center">
+            <Link to={link.url} className="text-decoration-none">
+              <div className={`dashboard-card ${link.bgColor}`}>
+                <FontAwesomeIcon icon={link.icon} size="2x" />
+                <h5>{link.name}</h5>
+                {/* <p>{ticketCount}</p> */}
+                <p>{link.count}</p>
+              </div>
+            </Link>
           </div>
+        );
+      })}
+</div>
+
+</div>
+ 
 
           {/* Bar Chart */}
-          <div className="col-12 col-md-6">
+          {/* <div className="col-12 col-md-6">
             <div className="bar-chart-container">
               <h5 className="text-center">Tickets Overview</h5>
               {loading ? (
@@ -398,7 +432,9 @@ export default function Tickets() {
                     <YAxis domain={[0, "dataMax"]} />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="Total" fill="#007bff" name="Total Tickets" />
+                    <Bar dataKey="Total" 
+                    fill="#007bff" 
+                    name="Total Tickets" />
                     <Bar
                       dataKey="Opened"
                       fill="#28a745"
@@ -409,12 +445,14 @@ export default function Tickets() {
                       fill="#dc3545"
                       name="Closed Tickets"
                     />
-                    <Bar dataKey="Inprogress" fill="#ffc107" name="Inprogress Tickets" />
+                    <Bar dataKey="Inprogress"
+                     fill="#ffc107" 
+                     name="Inprogress Tickets" />
                   </BarChart>
                 </ResponsiveContainer>
               )}
             </div>
-          </div>
+          </div> */}
           {/* Search Bar
       <div className="search-container">
         <input
@@ -439,7 +477,7 @@ export default function Tickets() {
         }`}
         onClick={() => {
           setFilterStatus(status);
-          setCurrentPage(0);
+          setPage(0);
         }}
       >
         {status}
@@ -550,24 +588,15 @@ export default function Tickets() {
 
           {/* Pagination */}
           <div className="pagination-container">
-            <button
-              className="pagination-button"
-              onClick={handlePrevPage}
-              disabled={currentPage === 0}
-            >
-              <FaArrowLeft /> Previous
-            </button>
-            <span>
-              Page {currentPage + 1} of {totalPages || 1}
-            </span>
-            <button
-              className="pagination-button"
-              onClick={handleNextPage}
-              disabled={currentPage >= totalPages - 1}
-            >
-              Next <FaArrowRight />
-            </button>
-          </div>
+  <button className="pagination-button" onClick={handlePrevPage} disabled={page === 1}>
+    <FaArrowLeft /> Previous
+  </button>
+  <span>Page {page} of {totalPages}</span>
+  <button className="pagination-button" onClick={handleNextPage} disabled={page >= totalPages}>
+    Next <FaArrowRight />
+  </button>
+</div>
+
         </div>
       </div>
     </div>
